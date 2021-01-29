@@ -5,7 +5,7 @@
 function createPlayer(race) {
     let player = {
         race,
-        faceUp = null
+        faceUp: null,
     };
     return (player);
 }
@@ -16,7 +16,7 @@ function createPlayer(race) {
 
 function pickCard(deck, player, nextdeck) {
     if (player.faceUp)
-        nextdeck.push(player.faceUp)
+        nextdeck.push(player.faceUp);
     player.faceUp = deck.shift();
     eventCard(player.faceUp);
 }
@@ -27,7 +27,7 @@ function pickCard(deck, player, nextdeck) {
 
 function resetDeck(deck, nextdeck)
 {
-    deck = nextdeck
+    deck = nextdeck;
     nextdeck = [];
     return (deck)
 }
@@ -36,4 +36,4 @@ module.exports = {
     createPlayer,
     pickCard,
     resetDeck
-}
+};
