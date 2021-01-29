@@ -41,6 +41,7 @@ class Game {
             uuid: ws.uuid,
             username: ws.username,
             race: null, faceUp: null,
+            drank: 0, drinkCanceled: false, doubleDrink: false
         });
         this.sendPlayerData();
     }

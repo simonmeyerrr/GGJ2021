@@ -24,7 +24,36 @@ function raceSelectedAll(gameState) {
 }
 
 function eventCard() {
-
+    if (gameState.players[pos].faceUp <= 3) {                                           // carte 1 - 3         
+        if (gameState.players[pos].drinkCanceled) {
+            gameState.players[pos].drinkCanceled = false;
+            return;
+        } else if (gameState.players[pos].doubleDrink) {
+            gameState.players[pos].drank += (gameState.players[pos].faceUp * 2);
+            gameState.players[pos].doubleDrink = false;
+            return;
+        }
+        gameState.players[pos].drank += gameState.players[pos].faceUp.value;
+    } else if (gameState.players[pos].faceUp > 3 && gameState.players[pos].faceUp <= 6) {   // carte 4 - 6
+        let index = Math.floor(Math.random() * gameState.players.length)
+        while (index == pos || !gameState.players[index].ws) {
+            index = Math.floor(Math.random() * gameState.players.length);
+        }
+        if (gameState.players[index].drinkCanceled) {
+            gameState.players[index].drinkCanceled = false;
+            return;
+        }
+        if (gameState.players[index].doubleDrink) {
+            gameState.players[index].drank += (gameState.players[pos].faceUp.value * 2);
+            gameState.players[index].doubleDrink = false;
+        } else {
+            gameState.players[index].drank += gameState.players[pos].faceUp.value
+        }
+    } else if (gameState.players[pos].faceUp > 6 && gameState.players[pos].faceUp <= 8) {    // carte 6 - 8 = x2
+        gameState.players[pos].doubleDrink = true;
+    } else if (gameState.players[pos].faceUp > 8 && gameState.players[pos].faceUp <= 10) {   // carte 8 - 10 = canceled;
+        gameState.players[index].drinkCanceled = true;
+    }
 }
 
 function pickCard(gameState, pos) {
@@ -32,7 +61,7 @@ function pickCard(gameState, pos) {
         gameState.nextDeck.push(gameState.players[pos].faceUp);
     gameState.players[pos].faceUp = gameState.deck.shift();
     gameState.hasPicked = true;
-    eventCard();
+    eventCard(gameState, pos);
 }
 
 function callChtulu(gameState) {
