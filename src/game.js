@@ -5,6 +5,7 @@ class Game {
         this.created = Date.now();
         this.started = false;
         this.players = [];
+        this.playing = 0;
     }
 
     sendPlayerData() {
@@ -55,10 +56,49 @@ class Game {
         this.sendPlayerData();
     }
 
+    sendUpdateGame() {
+        // envoie les infos a tous les joueurs
+    }
+
+    getPlayerPos(ws) {
+        for (let i = 0; i < this.players.length; i++) {
+            if (this.players[i].uuid === ws.uuid) {
+                return i;
+            }
+        }
+    }
+
     messageReceived(ws, msg) {
-        console.log("Player messaged", msg);
-        if (msg.type === "start") {
-            this.started = true;
+        const pos = this.getPlayerPos(ws);
+        console.log("Player messaged", pos, msg);
+
+
+        if (!this.started) {
+            if (msg.type === "start") {
+                // check si la game peut start (race selected)
+                this.started = true;
+                return this.sendUpdateGame();
+            } else if (msg.type === "pickRace") {
+                // set la race
+                this.sendPlayerData();
+            } else {
+                return ws.sendError("invalid message type", false);
+            }
+        } else {
+            if (pos !== this.playing) {
+                return ws.sendError("not your turn to play", false);
+            } else if (msg.type === "pick") {
+                // tire la carte, l'applique
+                return this.sendUpdateGame();
+            } else if (msg.type === "callChtulu") {
+                // tire la carte, l'applique
+                return this.sendUpdateGame();
+            } else if (msg.type === "endTurn") {
+                // calcul le joueur suivant
+                return this.sendUpdateGame();
+            } else {
+                return ws.sendError("invalid message type", false);
+            }
         }
     }
 }
