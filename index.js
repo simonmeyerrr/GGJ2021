@@ -4,13 +4,13 @@ const port = process.env.PORT || 8080;
 const express = require('express');
 const expressWs = require('express-ws');
 
-const game = require('./src/game');
+const handler = require('./src/handler');
 
 const app = express();
 expressWs(app);
 
-app.post('/api/game', game.createGameHandler);
-app.ws('/api/game/:id', game.gameWsHandler);
+app.post('/api/game', handler.createGameHandler);
+app.ws('/api/game/:id', handler.gameWsHandler);
 
 app.get('/', (req, res) => res.sendFile(__dirname + '/public/menu.html'));
 app.get('/:id', (req, res) => res.sendFile(__dirname + '/public/game.html'));

@@ -1,34 +1,23 @@
-const uuid = require('uuid');
-
-const games = {};
-
-const gameWsHandler = (ws, req) => {
-    ws.on('message', (msg) => {
-        console.log("message", msg);
-    });
-
-    ws.on('error', (e) => {
-        console.log("error", e);
-    });
-
-    ws.on('close', (msg) => {
-        console.log("close");
-    });
-};
-
-const createGameHandler = (req, res) => {
-    const gameId = uuid.v4();
-    if (games.hasOwnProperty(gameId)) {
-        throw "Game already exists";
-    } else {
-        games[gameId] = {};
+class Game {
+    constructor(uuid) {
+        console.log("Game created", uuid);
+        this.uuid = uuid;
+        this.created = Date.now();
     }
-    return res.json({
-        id: gameId,
-    })
-};
+
+    addPlayer(ws) {
+        console.log("Player added");
+    }
+
+    removePlayer(ws) {
+        console.log("Player removed");
+    }
+
+    messageReceived(ws, msg) {
+        console.log("Player messaged", msg);
+    }
+}
 
 module.exports = {
-    gameWsHandler,
-    createGameHandler
+    Game
 };
