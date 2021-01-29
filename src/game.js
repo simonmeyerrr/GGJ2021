@@ -1,3 +1,6 @@
+const eventGame = require('./events');
+const cardFct = require('./cards');
+
 class Game {
     constructor(uuid) {
         console.log("Game created", uuid);
@@ -6,6 +9,9 @@ class Game {
         this.started = false;
         this.players = [];
         this.playing = 0;
+        this.hasPicked = false;
+        this.nextDect = [];
+        this.deck = cardFct.shuffle(cardFct.createDeck());
     }
 
     sendPlayerData() {
@@ -75,12 +81,15 @@ class Game {
 
         if (!this.started) {
             if (msg.type === "start") {
-                // check si la game peut start (race selected)
-                this.started = true;
-                return this.sendUpdateGame();
+                if (eventGame.raceSelectedAll(this)) {
+                    this.started = true;
+                    return this.sendUpdateGame();
+                } else {
+                    return ws.sendError("Cannot start game, all race not selected", false);
+                }
             } else if (msg.type === "pickRace") {
-                // set la race
-                this.sendPlayerData();
+                eventGame.setRace(this, pos, msg.data);
+                return this.sendPlayerData();
             } else {
                 return ws.sendError("invalid message type", false);
             }
@@ -88,13 +97,15 @@ class Game {
             if (pos !== this.playing) {
                 return ws.sendError("not your turn to play", false);
             } else if (msg.type === "pick") {
-                // tire la carte, l'applique
+                eventGame.pickCard(this, pos);
                 return this.sendUpdateGame();
             } else if (msg.type === "callChtulu") {
-                // tire la carte, l'applique
-                return this.sendUpdateGame();
+                if (eventGame.callChtulu(this))
+                    return this.sendUpdateGame();
+                else                                            // Faudra voir comment faire ces fonctions pour send des datas propres.
+                    return this.sendUpdateGame();
             } else if (msg.type === "endTurn") {
-                // calcul le joueur suivant
+                eventGame.endTurn(this);
                 return this.sendUpdateGame();
             } else {
                 return ws.sendError("invalid message type", false);
