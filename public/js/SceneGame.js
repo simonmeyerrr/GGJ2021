@@ -1,40 +1,40 @@
 const posPlayerinfo = [
     {
         card: {
-            x: 150,
-            y: 700,
-            rotation: 0.4
+            x: 345,
+            y: 725,
+            rotation: 0.3
         },
         name: {
-            x: 100,
+            x: 150,
             y: 1000,
         }
     },
     {
         card: {
-            x: 500,
-            y: 800,
-            rotation: 0.3
-        },
-        name: {
-            x: 700,
-            y: 900,
-        }
-    },
-    {
-        card: {
-            x: 600,
-            y: 840,
+            x: 480,
+            y: 775,
             rotation: 0.2
         },
         name: {
-            x: 800,
+            x: 400,
             y: 950,
         }
     },
     {
         card: {
-            x: 700,
+            x: 615,
+            y: 800,
+            rotation: 0.1
+        },
+        name: {
+                x: 500,
+            y: 1000,
+        }
+    },
+    {
+        card: {
+            x: 750,
             y: 840,
             rotation: 0.1
         },
@@ -45,7 +45,7 @@ const posPlayerinfo = [
     },
     {
         card: {
-            x: 800,
+            x: 885,
             y: 840,
             rotation: 0.0
         },
@@ -56,7 +56,7 @@ const posPlayerinfo = [
     },
     {
         card: {
-            x: 900,
+            x: 1020,
             y: 840,
             rotation: 0.0
         },
@@ -67,7 +67,7 @@ const posPlayerinfo = [
     },
     {
         card: {
-            x: 1000,
+            x: 1155,
             y: 840,
             rotation: -0.1
         },
@@ -78,20 +78,20 @@ const posPlayerinfo = [
     },
     {
         card: {
-            x: 1100,
-            y: 840,
-            rotation: -0.2
+            x: 1290,
+            y: 800,
+            rotation: -0.1
         },
         name: {
-            x: 1300,
+            x: 1345,
             y: 950,
         }
     },
     {
         card: {
-            x: 1200,
-            y: 840,
-            rotation: -0.3
+            x: 1425,
+            y: 775,
+            rotation: -0.2
         },
         name: {
             x: 1430,
@@ -100,9 +100,9 @@ const posPlayerinfo = [
     },
     {
         card: {
-            x: 1300,
-            y: 840,
-            rotation: -0.4
+            x: 1560,
+            y: 725,
+            rotation: -0.3
         },
         name: {
             x: 1560,
@@ -127,7 +127,7 @@ SceneGame.prototype.displayPlayerData = function() {
     for (let i = 0; i < players.length; i++) {
         if (i === global.gameClient.myPlayerNb) {
             if (!players[i].faceUp) {
-                this.cards[i].frame = 54;
+                this.cards[i].frame = 52;
             } else {
                 let frame = 0;
                 frame += players[i].faceUp.value - 1;
@@ -137,7 +137,7 @@ SceneGame.prototype.displayPlayerData = function() {
             this.texts[i].setText(players[i].username);
         } else if (players[i].connected) {
             if (!players[i].faceUp) {
-                this.cards[i].frame = 54;
+                this.cards[i].frame = 52;
             } else {
                 let frame = 0;
                 frame += players[i].faceUp.value - 1;
@@ -147,7 +147,7 @@ SceneGame.prototype.displayPlayerData = function() {
             this.texts[i].setText(players[i].username);
             console.log("other player", i, players[i]);
         } else {
-            this.cards[i].frame = 55;
+            this.cards[i].frame = 1;
         }
     }
 };
@@ -164,15 +164,16 @@ SceneGame.prototype.create = function() {
     this.texts = [];
     this.cards = []
     for (let i = 0; i < 10; ++i) {
-        let card = this.add.sprite(posPlayerinfo[i].card.x, posPlayerinfo[i].card.y, "card", 55);
-        card.scale.setTo(2.5, 2.5);
+        console.log(posPlayerinfo[i].card.x)
+        let card = this.add.sprite(posPlayerinfo[i].card.x, posPlayerinfo[i].card.y, "card", 1);
+        // card.scale.setTo(1.5, 1.5);
         card.rotation = posPlayerinfo[i].card.rotation
         this.cards.push(card);
-        let text = this.add.text(posPlayerinfo[i].name.x, posPlayerinfo[i].name.y, "", {
-            font: "65px Arial",
+        let text = this.add.text(posPlayerinfo[0].name.x, posPlayerinfo[0].name.y, "jean-mis", {
+            font: "40px Arial",
             fill: "#0e0b0b",
             align: "center",
-            strokeThickness: 16,
+            strokeThickness: 8  ,
             stroke: '#24411a',
         })
         text.anchor.setTo(0.5, 0.5);
