@@ -151,7 +151,106 @@ const posPlayerinfo = [
     },
 ]
 
-const skinsOrder = ["obelin", "orc", "siren", "mage", "elf", "nain"]
+const gameOptions = {
+
+    // flipping speed in milliseconds
+    flipSpeed: 600,
+    flipMoveSpeed: 1200,
+
+    // flipping zoom ratio. Simulates the card to be raised when flipping
+    flipZoom: 1.2
+}
+
+const skinsOrder = ["gobelin", "orc", "siren", "mage", "elf", "nain"]
+
+const drawDeck = {
+    x: 1920 / 2,
+    y: 1080 / 2 + 70
+}
+
+const Card = class {
+    constructor(x, y, card) {
+        this.y = y;
+        this.x = x;
+        this.isFlipping = false;
+        this.isMoving = false;
+        this.card = card;
+    }
+
+    reset(x, y) {
+        this.isFlipping = false;
+        this.isMoving = false;
+        this.card.rotation = 0;
+        this.card.x = x;
+        this.card.y = y;
+        this.card.scale.setTo(1, 1);
+        this.card.frame = 52;
+    }
+
+    setScale(x, y) {
+        console.log("yo");
+        this.card.scale.setTo(x, y);
+    }
+
+    setSlowScaling(x, y, game) {
+        this.slowScaling = game.add.tween(this.card.scale).to({
+            x: x,
+            y: y
+        }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
+        this.slowScaling.start();
+    }
+
+    flipCard(frame, game, x, y, rotate) {
+        this.frame = frame
+        this.flipTween = game.add.tween(this.card.scale).to({
+            x: 0,
+            y: gameOptions.flipZoom
+        }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
+
+        // once the card is flipped, we change its frame and call the second tween
+        this.flipTween.onComplete.add(function(){
+            this.card.frame = frame;
+            this.backFlipTween.start();
+        }, this);
+
+        // second tween: we complete the flip and lower the card
+        this.backFlipTween = game.add.tween(this.card.scale).to({
+            x: 4,
+            y: 4
+        }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
+        this.backFlipTween.onComplete.add(() => {
+            game.time.events.add(2000, () => {
+                this.moveTo(x, y, game);
+                this.setSlowScaling(1, 1, game);
+                this.setRotate(rotate, game);
+                this.isFlipping = false;
+
+            });
+        });
+        this.flipTween.start();
+    }
+
+    moveTo(x, y, game) {
+        this.flipMove = game.add.tween(this.card).to({
+            x: x,
+            y: y
+        }, gameOptions.flipMoveSpeed / 2, Phaser.Easing.Linear.None);
+        this.flipMove.onComplete.add(function(){
+            this.isMoving = false;
+        }, this);
+        this.flipMove.start();
+    }
+
+    setRotate(degre, game) {
+        this.rotateMove = game.add.tween(this.card).to({
+            rotation: degre,
+        }, gameOptions.flipMoveSpeed / 2, Phaser.Easing.Linear.None);
+        this.rotateMove.onComplete.add(function(){
+            this.isMoving = false;
+        }, this);
+        this.rotateMove.start();
+    }
+}
 
 const SceneGame = function() {};
 
@@ -206,9 +305,9 @@ SceneGame.prototype.displayPlayerData = function() {
             this.texts[i].visible = true;
         } else {
             this.skins[i].visible = false;
-            this.cards[i].visible = false;
+            // this.cards[i].visible = false;
             this.texts[i].visible = false;
-            this.cards[i].frame = 55;
+            this.cards[i].frame = 1;
         }
     }
 };
@@ -231,6 +330,11 @@ SceneGame.prototype.create = function() {
     const global = this.game.global;
 
     this.background = this.add.sprite(0, 0, "background", 0);
+    this.add.sprite(drawDeck.x, drawDeck.y, "card", 52);
+    let mainCard = this.add.sprite(drawDeck.x, drawDeck.y, "card", 52);
+    this.mainCard = new Card(drawDeck.x, drawDeck.y, mainCard);
+
+
     this.texts = [];
     this.cards = [];
     this.skins = [];
@@ -238,7 +342,7 @@ SceneGame.prototype.create = function() {
         let skin = this.add.sprite(posPlayerinfo[i].skin.x, posPlayerinfo[i].skin.y, "skin", 0);
         skin.scale.setTo(0.40, 0.40);
         this.skins.push(skin);
-        let card = this.add.sprite(posPlayerinfo[i].card.x, posPlayerinfo[i].card.y, "card", 55);
+        let card = this.add.sprite(posPlayerinfo[i].card.x, posPlayerinfo[i].card.y, "card", 1);
         card.rotation = posPlayerinfo[i].card.rotation
         this.cards.push(card);
         let text = this.add.text(0, 0, "", {
@@ -249,9 +353,24 @@ SceneGame.prototype.create = function() {
             }).setTextBounds(posPlayerinfo[i].name.x, posPlayerinfo[i].name.y, 200, posPlayerinfo[i].name.y);
         this.texts.push(text);
         skin.visible = false;
-        card.visible = false;
+        // card.visible = false;
         text.visible = false;
     }
+    this.game.input.onDown.add(() => {
+
+        if (!this.mainCard.isFlipping && !this.mainCard.isMoving) {
+
+            // it's flipping now!
+            this.mainCard.isFlipping = true;
+            this.mainCard.isMoving = true
+
+
+            // start the first of the two flipping animations
+            this.world.bringToTop(this.mainCard.card);
+            this.mainCard.flipCard(1, this, posPlayerinfo[0].card.x, posPlayerinfo[0].card.y, posPlayerinfo[0].card.rotation);
+            this.mainCard.moveTo(this.game.world.width / 2 -  120, this.game.world.height / 2 - 300, this);
+        }
+    });
     this.elems = {
         errorMessage: this.add.text(0, 0, "", {
             font: "65px ManicSea", fill: "#ff0000",
