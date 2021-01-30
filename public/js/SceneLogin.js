@@ -7,10 +7,15 @@ SceneLogin.prototype.preload = function() {
     this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     this.scale.pageAlignHorizontally = true;
     this.scale.pageAlignVertically = true;
-    this.stage.backgroundColor = 0x448844;
+    this.stage.backgroundColor = 0x000;
     // Load assets
-    this.load.spritesheet("background", "public/image/background.jpg", {frameWidth: 1920, frameHeight: 1080});
+    this.load.spritesheet("background", "public/resources/wpp.jpg", {frameWidth: 1920, frameHeight: 1080});
 };
+
+{/* <button type="button" class="btn btn-primary btn-lg " id="btn-create" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i>">
+                Créer une partie
+            </button> */}
+
 
 SceneLogin.prototype.create = function() {
     console.log("Create Scene Login");
@@ -20,12 +25,18 @@ SceneLogin.prototype.create = function() {
 
     // Username input
     const loginContainer = document.getElementById("login-container");
+    const loginTitle = document.createElement("h1");
+    loginTitle.id = "login-title";
+    loginTitle.innerText = "Quel est ton nom d'aventurier ?";
+    loginContainer.appendChild(loginTitle);
     const loginInput = document.createElement("input");
     loginInput.id = "login-input";
     loginContainer.appendChild(loginInput);
     const loginButton = document.createElement("button");
     loginButton.id = "login-button";
     loginButton.innerText = "Rejoindre la partie";
+    loginButton.className = "btn btn-primary btn-lg";
+    loginButton.type = "button";
     loginContainer.appendChild(loginButton);
     loginButton.onclick = () => {
         console.log("CLICK", this.game.global.gameId, loginInput.value);
