@@ -4,7 +4,9 @@ SceneLobby.prototype.preload = function() {
     console.log("Preload Scene Lobby");
     // Load assets
     this.load.spritesheet("background", "public/resources/wpp.jpg", {frameWidth: 1920, frameHeight: 1080});
-    this.load.spritesheet('button', 'public/image/button_sprite_sheet.png', 193, 71);
+    this.load.spritesheet('buttonRight', 'public/image/right.png', 108, 116);
+    this.load.spritesheet('buttonLeft', 'public/image/left.png', 108, 116);
+    this.load.spritesheet('avatars', 'public/image/avatars.png', 500, 500);
 };
 
 const actionStart = function() {
@@ -25,14 +27,25 @@ SceneLobby.prototype.displayError = function() {
     // TODO
 };
 
+SceneLobby.prototype.nextAvatar = function() {
+    this.elems.avatar.frame++;
+};
+
+SceneLobby.prototype.prevAvatar = function() {
+    this.elems.avatar.frame--;
+};
+
 SceneLobby.prototype.create = function() {
     console.log("Create Scene Lobby");
     const global = this.game.global;
 
     this.elems = {
         background: this.add.sprite(0, 0, "background", 0),
-        buttonStart: this.add.button(this.world.centerX - 95, 400, 'button', actionStart, this, 2, 1, 0),
-        buttonInvite: this.add.button(this.world.centerX - 95, 600, 'button', actionInvite, this, 2, 1, 0),
+        buttonNext: this.add.button(this.world.centerX - 54 + 300, 250, "buttonRight", this.nextAvatar, this, 2, 1, 0),
+        buttonPrev: this.add.button(this.world.centerX - 54 - 300, 250, "buttonLeft", this.prevAvatar, this, 2, 1, 0),
+        avatar: this.add.sprite(this.world.centerX - 250, 80, "avatars", 0),
+        buttonStart: this.add.button(this.world.centerX - 95, 400, 'buttonRight', actionStart, this, 2, 1, 0),
+        buttonInvite: this.add.button(this.world.centerX - 95, 600, 'buttonLeft', actionInvite, this, 2, 1, 0),
     };
 
     const loginContainer = document.getElementById("login-container");
