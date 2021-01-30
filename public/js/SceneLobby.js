@@ -35,6 +35,10 @@ SceneLobby.prototype.create = function() {
         buttonInvite: this.add.button(this.world.centerX - 95, 600, 'button', actionInvite, this, 2, 1, 0),
     };
 
+    const loginContainer = document.getElementById("login-container");
+    loginContainer.style.display = "none";
+
+
     // Set callback
     global.gameClient.onPlayerUpdate = () => this.displayPlayerData();
     this.displayPlayerData();
