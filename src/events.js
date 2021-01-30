@@ -1,3 +1,12 @@
+const cardFct = require('./cards')
+
+function deckIsEmpty(gameState) {
+    if (gameState.deck.length == 0) {
+        gameState.deck = cardFct.shuffle(gameState.nextDeck);
+        gameState.nextDeck = [];
+    }
+}
+
 function endTurn(gameState) {
     if (gameState.hasPicked === true) {
         gameState.hasPicked = false;
@@ -57,6 +66,7 @@ function eventCard() {
 }
 
 function pickCard(gameState, pos) {
+    deckIsEmpty(gameState);
     if (gameState.players[pos].faceUp)
         gameState.nextDeck.push(gameState.players[pos].faceUp);
     gameState.players[pos].faceUp = gameState.deck.shift();
@@ -75,13 +85,15 @@ function callChtulu(gameState) {
         else
             total += gameState.players[i].faceUp.value;
     }
-
+    deckIsEmpty(gameState);
     card = gameState.deck.shift();
     total += card.value;
     gameState.nextDeck.push(card);
+    deckIsEmpty(gameState);
     card = gameState.deck.shift();
     total += card.value;
     gameState.nextDeck.push(card);
+    deckIsEmpty(gameState);
     card = null;
 
     if (total >= (RemainingPlayer * 10))
