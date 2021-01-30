@@ -57,6 +57,14 @@ class Game {
             for (const player of this.players) {
                 if (player.uuid === ws.uuid) {
                     player.ws = null;
+                    if (this.players[this.playing].uuid == ws.uuid) {
+                        while (1) {
+                            this.playing = (this.playing + 1) % this.players.length;
+                            if (this.players[this.playing].ws) {
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         } else {
