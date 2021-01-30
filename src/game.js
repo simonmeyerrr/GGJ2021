@@ -25,8 +25,12 @@ class Game {
             drinkCanceled: player.drinkCanceled,
             doubleDrink: player.doubleDrink,
         }));
+        const total = this.players.length;
+        const connected = this.players.filter(el => el.ws).length;
+        const faceUpConnected = this.player.filter(el => el.ws && el.faceUp)
+
         this.players.forEach((player) => {
-            if (player.ws) player.ws.sendMessage('players', {list: data});
+            if (player.ws) player.ws.sendMessage('players', {list: data, total, connected, faceUpConnected});
         });
     }
 
