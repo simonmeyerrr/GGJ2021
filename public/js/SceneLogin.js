@@ -13,15 +13,26 @@ SceneLogin.prototype.preload = function() {
 };
 
 SceneLogin.prototype.displayError = function(err) {
-    console.log("EEEEEEEEEEEEEERRR", err);
-    // TODO
+    this.elems.errorMessage.setText(err);
+    this.elems.errorMessage.alpha = 1;
+    this.time.events.add(2000, () => {
+        this.add.tween(this.elems.errorMessage).to({}, 1500, Phaser.Easing.Linear.None, true);
+        this.add.tween(this.elems.errorMessage).to({alpha: 0}, 1500, Phaser.Easing.Linear.None, true);
+    });
 };
 
 SceneLogin.prototype.create = function() {
     console.log("Create Scene Login");
     const global = this.game.global;
 
-    this.background = this.add.sprite(0, 0, "background", 0);
+    this.elems = {
+        background: this.add.sprite(0, 0, "background", 0),
+        errorMessage: this.add.text(0, 0, "", {
+            font: "65px ManicSea", fill: "#ff0000",
+            boundsAlignH: "center", boundsAlignV: "middle",
+        }).setTextBounds(0, 600, 1980, 600),
+    };
+
 
     // Username input
     const loginContainer = document.getElementById("login-container");
@@ -31,6 +42,7 @@ SceneLogin.prototype.create = function() {
     loginContainer.appendChild(loginTitle);
     const loginInput = document.createElement("input");
     loginInput.id = "login-input";
+    loginInput.maxLength = 10;
     loginContainer.appendChild(loginInput);
     const loginButton = document.createElement("button");
     loginButton.id = "login-button";
@@ -40,8 +52,7 @@ SceneLogin.prototype.create = function() {
     loginContainer.appendChild(loginButton);
     loginButton.onclick = () => {
         if (loginInput.value.length === 0) return;
-        if (loginInput.value.length > 10) return this.displayError("Username too long");
-
+        this.elems.errorMessage.setText("");
         this.game.global.gameClient = new GameClient(
             this.game.global.gameId, loginInput.value
         );

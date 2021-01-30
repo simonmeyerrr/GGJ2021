@@ -157,8 +157,12 @@ SceneGame.prototype.displayGameData = function() {
 };
 
 SceneGame.prototype.displayError = function() {
-    console.log("EEEEEEEEEEEEEERRR", this.game.global.gameClient.error);
-    // TODO
+    this.elems.errorMessage.setText(this.game.global.gameClient.error);
+    this.elems.errorMessage.alpha = 1;
+    this.time.events.add(2000, () => {
+        this.add.tween(this.elems.errorMessage).to({}, 1500, Phaser.Easing.Linear.None, true);
+        this.add.tween(this.elems.errorMessage).to({alpha: 0}, 1500, Phaser.Easing.Linear.None, true);
+    });
 };
 
 SceneGame.prototype.create = function() {
@@ -185,6 +189,12 @@ SceneGame.prototype.create = function() {
         text.setShadow(2, 2, '#333333', 2, true, false);
         this.texts.push(text);
     }
+    this.elems = {
+        errorMessage: this.add.text(0, 0, "", {
+            font: "65px ManicSea", fill: "#ff0000",
+            boundsAlignH: "center", boundsAlignV: "middle",
+        }).setTextBounds(0, 600, 1980, 600),
+    };
 
     // Set callback
     global.gameClient.onPlayerUpdate = () => this.displayPlayerData();
