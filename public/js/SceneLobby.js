@@ -19,12 +19,18 @@ const actionInvite = function() {
 };
 
 SceneLobby.prototype.displayPlayerData = function() {
+    //this.game.global.gameClient.players
+    //this.game.global.gameClient.myPlayerNb
     // TODO
 };
 
 SceneLobby.prototype.displayError = function() {
-    console.log("EEEEEEEEEEEEEERRR", this.game.global.gameClient.error);
-    // TODO
+    this.elems.errorMessage.setText(this.game.global.gameClient.error);
+    this.elems.errorMessage.alpha = 1;
+    this.time.events.add(2000, () => {
+        this.add.tween(this.elems.errorMessage).to({}, 1500, Phaser.Easing.Linear.None, true);
+        this.add.tween(this.elems.errorMessage).to({alpha: 0}, 1500, Phaser.Easing.Linear.None, true);
+    });
 };
 
 SceneLobby.prototype.nextAvatar = function() {
@@ -44,8 +50,12 @@ SceneLobby.prototype.create = function() {
         buttonNext: this.add.button(this.world.centerX - 54 + 300, 250, "buttonRight", this.nextAvatar, this, 2, 1, 0),
         buttonPrev: this.add.button(this.world.centerX - 54 - 300, 250, "buttonLeft", this.prevAvatar, this, 2, 1, 0),
         avatar: this.add.sprite(this.world.centerX - 250, 80, "avatars", 0),
-        buttonStart: this.add.button(this.world.centerX - 95, 400, 'buttonRight', actionStart, this, 2, 1, 0),
-        buttonInvite: this.add.button(this.world.centerX - 95, 600, 'buttonLeft', actionInvite, this, 2, 1, 0),
+        buttonStart: this.add.button(this.world.centerX - 95, 400, 'button', actionStart, this, 2, 1, 0),
+        buttonInvite: this.add.button(this.world.centerX - 95, 600, 'button', actionInvite, this, 2, 1, 0),
+        errorMessage: this.add.text(0, 0, "", {
+            font: "65px ManicSea", fill: "#ff0000",
+            boundsAlignH: "center", boundsAlignV: "middle",
+        }).setTextBounds(0, 600, 1980, 600),
     };
 
     const loginContainer = document.getElementById("login-container");

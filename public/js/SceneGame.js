@@ -1,112 +1,152 @@
 const posPlayerinfo = [
     {
         card: {
-            x: 150,
-            y: 700,
-            rotation: 0.4
+            x: 345,
+            y: 675,
+            rotation: 0.27
         },
         name: {
             x: 100,
-            y: 1000,
-        }
-    },
-    {
-        card: {
-            x: 500,
-            y: 800,
-            rotation: 0.3
+            y: 1020,
         },
-        name: {
-            x: 700,
-            y: 900,
+        skin: {
+            x: 100,
+            y: 850
         }
     },
     {
         card: {
-            x: 600,
-            y: 840,
+            x: 480,
+            y: 725,
             rotation: 0.2
         },
         name: {
-            x: 800,
-            y: 950,
+            x: 275,
+            y: 1020,
+        },
+        skin: {
+            x: 275,
+            y: 850
         }
     },
     {
         card: {
-            x: 700,
-            y: 840,
-            rotation: 0.1
+            x: 615,
+            y: 750,
+            rotation: 0.08
         },
         name: {
-            x: 1000,
-            y: 900,
+            x: 450,
+            y: 1020,
+        },
+        skin: {
+            x: 450,
+            y: 850
         }
     },
     {
         card: {
-            x: 800,
-            y: 840,
+            x: 750,
+            y: 775,
             rotation: 0.0
         },
         name: {
-            x: 1100,
-            y: 950,
+            x: 625,
+            y: 1020,
+        },
+        skin: {
+            x: 625,
+            y: 850
         }
     },
     {
         card: {
-            x: 900,
-            y: 840,
+            x: 885,
+            y: 775,
             rotation: 0.0
         },
         name: {
-            x: 1200,
-            y: 900,
+            x: 800,
+            y: 1020,
+        },
+        skin: {
+            x: 800,
+            y: 850
         }
     },
     {
         card: {
-            x: 1000,
-            y: 840,
-            rotation: -0.1
+            x: 1020,
+            y: 775,
+            rotation: 0.0
         },
         name: {
-            x: 900,
-            y: 950,
+            x: 975,
+            y: 1020,
+        },
+        skin: {
+            x: 975,
+            y: 850
         }
     },
     {
         card: {
-            x: 1100,
-            y: 840,
+            x: 1155,
+            y: 775,
+            rotation: 0.0
+        },
+        name: {
+            x: 1150,
+            y: 1020,
+        },
+        skin: {
+            x: 1150,
+            y: 850
+        }
+    },
+    {
+        card: {
+            x: 1290,
+            y: 750,
+            rotation: -0.08
+        },
+        name: {
+            x: 1325,
+            y: 1020,
+        },
+        skin: {
+            x: 1325,
+            y: 850
+        }
+    },
+    {
+        card: {
+            x: 1425,
+            y: 725,
             rotation: -0.2
         },
         name: {
-            x: 1300,
-            y: 950,
+            x: 1500,
+            y: 1020,
+        },
+        skin: {
+            x: 1500,
+            y: 850
         }
     },
     {
         card: {
-            x: 1200,
-            y: 840,
-            rotation: -0.3
-        },
-        name: {
-            x: 1430,
-            y: 900,
-        }
-    },
-    {
-        card: {
-            x: 1300,
-            y: 840,
-            rotation: -0.4
-        },
-        name: {
             x: 1560,
-            y: 950,
+            y: 700,
+            rotation: -0.27
+        },
+        name: {
+            x: 1675,
+            y: 1020,
+        },
+        skin: {
+            x: 1675,
+            y: 850
         }
     },
 ]
@@ -118,6 +158,7 @@ SceneGame.prototype.preload = function() {
     const global = this.game.global;
     // Load assets
     this.load.spritesheet("card", "public/image/cards.png", 81, 117);
+    this.load.spritesheet("skin", "public/resources/mermaid.png", {frameWidth: 500, frameHeight: 500});
     this.load.spritesheet("background", "public/image/background.png", {frameWidth: 1920, frameHeight: 1080});
 };
 
@@ -127,17 +168,20 @@ SceneGame.prototype.displayPlayerData = function() {
     for (let i = 0; i < players.length; i++) {
         if (i === global.gameClient.myPlayerNb) {
             if (!players[i].faceUp) {
-                this.cards[i].frame = 54;
+                this.cards[i].frame = 52;
             } else {
                 let frame = 0;
                 frame += players[i].faceUp.value - 1;
                 frame += 13 * (players[i].faceUp.color === 'C' ? 0 : players[i].faceUp.color === 'D' ? 1 : players[i].faceUp.color === 'H' ? 2 : 3)
                 this.cards[i].frame = frame
             }
+            this.skins[i].visible = true;
+            this.cards[i].visible = true;
+            this.texts[i].visible = true;
             this.texts[i].setText(players[i].username);
         } else if (players[i].connected) {
             if (!players[i].faceUp) {
-                this.cards[i].frame = 54;
+                this.cards[i].frame = 52;
             } else {
                 let frame = 0;
                 frame += players[i].faceUp.value - 1;
@@ -145,8 +189,13 @@ SceneGame.prototype.displayPlayerData = function() {
                 this.cards[i].frame = frame
             }
             this.texts[i].setText(players[i].username);
-            console.log("other player", i, players[i]);
+            this.skins[i].visible = true;
+            this.cards[i].visible = true;
+            this.texts[i].visible = true;
         } else {
+            this.skins[i].visible = false;
+            this.cards[i].visible = false;
+            this.texts[i].visible = false;
             this.cards[i].frame = 55;
         }
     }
@@ -157,8 +206,12 @@ SceneGame.prototype.displayGameData = function() {
 };
 
 SceneGame.prototype.displayError = function() {
-    console.log("EEEEEEEEEEEEEERRR", this.game.global.gameClient.error);
-    // TODO
+    this.elems.errorMessage.setText(this.game.global.gameClient.error);
+    this.elems.errorMessage.alpha = 1;
+    this.time.events.add(2000, () => {
+        this.add.tween(this.elems.errorMessage).to({}, 1500, Phaser.Easing.Linear.None, true);
+        this.add.tween(this.elems.errorMessage).to({alpha: 0}, 1500, Phaser.Easing.Linear.None, true);
+    });
 };
 
 SceneGame.prototype.create = function() {
@@ -167,24 +220,32 @@ SceneGame.prototype.create = function() {
 
     this.background = this.add.sprite(0, 0, "background", 0);
     this.texts = [];
-    this.cards = []
+    this.cards = [];
+    this.skins = [];
     for (let i = 0; i < 10; ++i) {
+        let skin = this.add.sprite(posPlayerinfo[i].skin.x, posPlayerinfo[i].skin.y, "skin");
+        skin.scale.setTo(0.40, 0.40);
+        this.skins.push(skin);
         let card = this.add.sprite(posPlayerinfo[i].card.x, posPlayerinfo[i].card.y, "card", 55);
-        card.scale.setTo(2.5, 2.5);
         card.rotation = posPlayerinfo[i].card.rotation
         this.cards.push(card);
-        let text = this.add.text(posPlayerinfo[i].name.x, posPlayerinfo[i].name.y, "", {
-            font: "65px Arial",
+        let text = this.add.text(0, 0, "", {
+            font: "40px ManicSea",
             fill: "#0e0b0b",
-            align: "center",
-            strokeThickness: 16,
-            stroke: '#24411a',
-        })
-        text.anchor.setTo(0.5, 0.5);
-        //  Apply the shadow to the Stroke only
-        text.setShadow(2, 2, '#333333', 2, true, false);
+            textAlign: "center",
+            boundsAlignH: "center"
+            }).setTextBounds(posPlayerinfo[i].name.x, posPlayerinfo[i].name.y, 200, posPlayerinfo[i].name.y);
         this.texts.push(text);
+        skin.visible = false;
+        card.visible = false;
+        text.visible = false;
     }
+    this.elems = {
+        errorMessage: this.add.text(0, 0, "", {
+            font: "65px ManicSea", fill: "#ff0000",
+            boundsAlignH: "center", boundsAlignV: "middle",
+        }).setTextBounds(0, 600, 1980, 600),
+    };
 
     // Set callback
     global.gameClient.onPlayerUpdate = () => this.displayPlayerData();
