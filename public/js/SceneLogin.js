@@ -12,11 +12,6 @@ SceneLogin.prototype.preload = function() {
     this.load.spritesheet("background", "public/resources/wpp.jpg", {frameWidth: 1920, frameHeight: 1080});
 };
 
-{/* <button type="button" class="btn btn-primary btn-lg " id="btn-create" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i>">
-                Créer une partie
-            </button> */}
-
-
 SceneLogin.prototype.create = function() {
     console.log("Create Scene Login");
     const global = this.game.global;

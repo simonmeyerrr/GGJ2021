@@ -117,8 +117,8 @@ SceneGame.prototype.preload = function() {
     console.log("Preload Scene Game");
     const global = this.game.global;
     // Load assets
-    this.load.spritesheet("card", "public/image/600px-Svg-cards-2.0.svg.png", 46, 67);
-    this.load.spritesheet("background", "public/image/background.jpg", {frameWidth: 1920, frameHeight: 1080});
+    this.load.spritesheet("card", "public/image/cards.png", 81, 117);
+    this.load.spritesheet("background", "public/image/background.png", {frameWidth: 1920, frameHeight: 1080});
 };
 
 SceneGame.prototype.displayPlayerData = function() {
