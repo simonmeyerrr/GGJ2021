@@ -2,111 +2,151 @@ const posPlayerinfo = [
     {
         card: {
             x: 345,
-            y: 725,
-            rotation: 0.3
+            y: 675,
+            rotation: 0.27
         },
         name: {
-            x: 150,
-            y: 1000,
+            x: 100,
+            y: 1020,
+        },
+        skin: {
+            x: 100,
+            y: 850
         }
     },
     {
         card: {
             x: 480,
-            y: 775,
+            y: 725,
             rotation: 0.2
         },
         name: {
-            x: 400,
-            y: 950,
+            x: 275,
+            y: 1020,
+        },
+        skin: {
+            x: 275,
+            y: 850
         }
     },
     {
         card: {
             x: 615,
-            y: 800,
-            rotation: 0.1
+            y: 750,
+            rotation: 0.08
         },
         name: {
-                x: 500,
-            y: 1000,
+            x: 450,
+            y: 1020,
+        },
+        skin: {
+            x: 450,
+            y: 850
         }
     },
     {
         card: {
             x: 750,
-            y: 840,
-            rotation: 0.1
+            y: 775,
+            rotation: 0.0
         },
         name: {
-            x: 1000,
-            y: 900,
+            x: 625,
+            y: 1020,
+        },
+        skin: {
+            x: 625,
+            y: 850
         }
     },
     {
         card: {
             x: 885,
-            y: 840,
+            y: 775,
             rotation: 0.0
         },
         name: {
-            x: 1100,
-            y: 950,
+            x: 800,
+            y: 1020,
+        },
+        skin: {
+            x: 800,
+            y: 850
         }
     },
     {
         card: {
             x: 1020,
-            y: 840,
+            y: 775,
             rotation: 0.0
         },
         name: {
-            x: 1200,
-            y: 900,
+            x: 975,
+            y: 1020,
+        },
+        skin: {
+            x: 975,
+            y: 850
         }
     },
     {
         card: {
             x: 1155,
-            y: 840,
-            rotation: -0.1
+            y: 775,
+            rotation: 0.0
         },
         name: {
-            x: 900,
-            y: 950,
+            x: 1150,
+            y: 1020,
+        },
+        skin: {
+            x: 1150,
+            y: 850
         }
     },
     {
         card: {
             x: 1290,
-            y: 800,
-            rotation: -0.1
+            y: 750,
+            rotation: -0.08
         },
         name: {
-            x: 1345,
-            y: 950,
+            x: 1325,
+            y: 1020,
+        },
+        skin: {
+            x: 1325,
+            y: 850
         }
     },
     {
         card: {
             x: 1425,
-            y: 775,
+            y: 725,
             rotation: -0.2
         },
         name: {
-            x: 1430,
-            y: 900,
+            x: 1500,
+            y: 1020,
+        },
+        skin: {
+            x: 1500,
+            y: 850
         }
     },
     {
         card: {
             x: 1560,
-            y: 725,
-            rotation: -0.3
+            y: 700,
+            rotation: -0.27
         },
         name: {
-            x: 1560,
-            y: 950,
+            x: 1675,
+            y: 1020,
+        },
+        skin: {
+            x: 1675,
+            y: 850
         }
     },
 ]
@@ -118,6 +158,7 @@ SceneGame.prototype.preload = function() {
     const global = this.game.global;
     // Load assets
     this.load.spritesheet("card", "public/image/cards.png", 81, 117);
+    this.load.spritesheet("skin", "public/resources/mermaid.png", {frameWidth: 500, frameHeight: 500});
     this.load.spritesheet("background", "public/image/background.png", {frameWidth: 1920, frameHeight: 1080});
 };
 
@@ -135,6 +176,7 @@ SceneGame.prototype.displayPlayerData = function() {
                 this.cards[i].frame = frame
             }
             this.texts[i].setText(players[i].username);
+            this
         } else if (players[i].connected) {
             if (!players[i].faceUp) {
                 this.cards[i].frame = 52;
@@ -147,7 +189,7 @@ SceneGame.prototype.displayPlayerData = function() {
             this.texts[i].setText(players[i].username);
             console.log("other player", i, players[i]);
         } else {
-            this.cards[i].frame = 1;
+            this.cards[i].frame = 55;
         }
     }
 };
@@ -167,23 +209,20 @@ SceneGame.prototype.create = function() {
 
     this.background = this.add.sprite(0, 0, "background", 0);
     this.texts = [];
-    this.cards = []
+    this.cards = [];
+    this.skins = [];
     for (let i = 0; i < 10; ++i) {
-        console.log(posPlayerinfo[i].card.x)
-        let card = this.add.sprite(posPlayerinfo[i].card.x, posPlayerinfo[i].card.y, "card", 1);
-        // card.scale.setTo(1.5, 1.5);
+        let skin = this.add.sprite(posPlayerinfo[i].skin.x, posPlayerinfo[i].skin.y, "skin");
+        skin.scale.setTo(0.40, 0.40);
+        this.skins.push(skin);
+        let card = this.add.sprite(posPlayerinfo[i].card.x, posPlayerinfo[i].card.y, "card", 55);
         card.rotation = posPlayerinfo[i].card.rotation
         this.cards.push(card);
-        let text = this.add.text(posPlayerinfo[0].name.x, posPlayerinfo[0].name.y, "jean-mis", {
-            font: "40px Arial",
+        let text = this.add.text(posPlayerinfo[i].name.x, posPlayerinfo[i].name.y, "jean-cule", {
+            font: "40px ManicSea",
             fill: "#0e0b0b",
             align: "center",
-            strokeThickness: 8  ,
-            stroke: '#24411a',
-        })
-        text.anchor.setTo(0.5, 0.5);
-        //  Apply the shadow to the Stroke only
-        text.setShadow(2, 2, '#333333', 2, true, false);
+        });
         this.texts.push(text);
     }
 
