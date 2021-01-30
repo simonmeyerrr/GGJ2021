@@ -151,6 +151,8 @@ const posPlayerinfo = [
     },
 ]
 
+const skinsOrder = ["obelin", "orc", "siren", "mage", "elf", "nain"]
+
 const SceneGame = function() {};
 
 SceneGame.prototype.preload = function() {
@@ -158,7 +160,7 @@ SceneGame.prototype.preload = function() {
     const global = this.game.global;
     // Load assets
     this.load.spritesheet("card", "public/image/cards.png", 81, 117);
-    this.load.spritesheet("skin", "public/resources/mermaid.png", {frameWidth: 500, frameHeight: 500});
+    this.load.spritesheet("skin", "public/image/avatars.png", 500, 500);
     this.load.spritesheet("background", "public/image/background.png", {frameWidth: 1920, frameHeight: 1080});
 };
 
@@ -175,6 +177,11 @@ SceneGame.prototype.displayPlayerData = function() {
                 frame += 13 * (players[i].faceUp.color === 'C' ? 0 : players[i].faceUp.color === 'D' ? 1 : players[i].faceUp.color === 'H' ? 2 : 3)
                 this.cards[i].frame = frame
             }
+            for (let index = 0; index < skinsOrder.length; ++index) {
+                if (skinsOrder[index] === players[i].race) {
+                    this.skins[i].frame = index;
+                }
+            }
             this.skins[i].visible = true;
             this.cards[i].visible = true;
             this.texts[i].visible = true;
@@ -189,6 +196,11 @@ SceneGame.prototype.displayPlayerData = function() {
                 this.cards[i].frame = frame
             }
             this.texts[i].setText(players[i].username);
+            for (let index = 0; index < skinsOrder.length; ++index) {
+                if (skinsOrder[index] === players[i].race) {
+                    this.skins[i].frame = index;
+                }
+            }
             this.skins[i].visible = true;
             this.cards[i].visible = true;
             this.texts[i].visible = true;
@@ -223,7 +235,7 @@ SceneGame.prototype.create = function() {
     this.cards = [];
     this.skins = [];
     for (let i = 0; i < 10; ++i) {
-        let skin = this.add.sprite(posPlayerinfo[i].skin.x, posPlayerinfo[i].skin.y, "skin");
+        let skin = this.add.sprite(posPlayerinfo[i].skin.x, posPlayerinfo[i].skin.y, "skin", 0);
         skin.scale.setTo(0.40, 0.40);
         this.skins.push(skin);
         let card = this.add.sprite(posPlayerinfo[i].card.x, posPlayerinfo[i].card.y, "card", 55);
