@@ -10,13 +10,29 @@
     <div id="login-container"></div>
 
     <script type="text/javascript" src="/public/js/GameClient.js"></script>
-    <script type="text/javascript" src="/public/js/GameDisplay2.js"></script>
+    <script type="text/javascript" src="/public/js/SceneLogin.js"></script>
+    <script type="text/javascript" src="/public/js/SceneLobby.js"></script>
+    <script type="text/javascript" src="/public/js/SceneGame.js"></script>
     <script type="text/javascript">
         window.onload = () => {
+            // Get game id from URL
             const splitedPath = window.location.pathname.split("/");
             const gameId = splitedPath[splitedPath.length - 1];
+            // Create Phaser game
+            const game = new Phaser.Game({
+                type: Phaser.AUTO,
+                width: 1920,
+                height: 1080,
+            });
+            game.global = {
+                gameId,
+                gameClient: null,
+            };
 
-            startDisplay(gameId);
+            game.state.add("SceneLogin", SceneLogin);
+            game.state.add("SceneLobby", SceneLobby);
+            game.state.add("SceneGame", SceneGame);
+            game.state.start("SceneLogin");
         }
     </script>
 </body>
