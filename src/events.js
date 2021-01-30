@@ -62,6 +62,18 @@ function eventCard(gameState, pos) {
         gameState.players[pos].doubleDrink = true;
     } else if (gameState.players[pos].faceUp > 8 && gameState.players[pos].faceUp <= 10) {   // carte 8 - 10 = canceled;
         gameState.players[index].drinkCanceled = true;
+    } else if (gameState.players[pos].faceUp > 10 && gameState.players[pos].faceUp <= 13) {
+        for (let i = 0; i < gameState.players.length; i++) {
+            if (gameState.players[i].ws) {
+                if (gameState.players[i].doubleDrink) {
+                    gameState.players[i].drank += 2;
+                } else if (gameState.players[i].drinkCanceled) {
+                    gameState.players[i].drank += 0;
+                } else {
+                    gameState.players[i].drank += 1;
+                }
+            }
+        }
     }
 }
 
