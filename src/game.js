@@ -107,9 +107,6 @@ class Game {
                 eventGame.pickCard(this, pos);
                 return this.sendUpdateGame();
             } else if (msg.type === "callChtulu") {
-                if (eventGame.callChtulu(this))
-                    return this.sendUpdateGame();
-                else                                            // Faudra voir comment faire ces fonctions pour send des datas propres.
                     return this.sendUpdateGame();
             } else if (msg.type === "endTurn") {
                 eventGame.endTurn(this);

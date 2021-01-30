@@ -98,8 +98,9 @@ function callChtulu(gameState) {
     card = null;
 
     if (total >= (RemainingPlayer * 10))
-        return (true);
-    return (false);
+        gameState.picked = 42;
+    else
+        gameState.picked = 84;
 }
 
 module.exports = {
