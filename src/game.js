@@ -62,11 +62,16 @@ class Game {
                 if (player.uuid === ws.uuid) {
                     player.ws = null;
                     if (this.players[this.playing].uuid == ws.uuid) {
+                        let i = 0;
                         while (1) {
                             this.playing = (this.playing + 1) % this.players.length;
                             if (this.players[this.playing].ws) {
                                 break;
+                            } else if (i >= (gameState.players.length + 1)) {
+                                this.playing = -1;
+                                break;
                             }
+                            i++;
                         }
                     }
                 }

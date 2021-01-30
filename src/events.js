@@ -11,10 +11,15 @@ function endTurn(gameState) {
     if (gameState.hasPicked === true) {
         gameState.hasPicked = false;
         while (1) {
+            let i = 0;
             gameState.playing = (gameState.playing + 1) % gameState.players.length;
             if (gameState.players[gameState.playing].ws) {
                 break;
+            } else if (i >= (gameState.players.length + 1)) {
+                gameState.playing = -1;
+                break;
             }
+            i++;
         }
     }
 }
