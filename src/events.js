@@ -37,20 +37,20 @@ function eventCard(gameState, pos) {
     for (let i = 0; i < gameState.players.length; i++)
         obj.push({player: i, drink: 0});
 
-    if (gameState.players[pos].faceUp <= 3) {                                           // carte 1 - 3
+    if (gameState.players[pos].faceUp.value <= 3) {                                           // carte 1 - 3
         if (gameState.players[pos].drinkCanceled) {
             gameState.players[pos].drinkCanceled = false;
             return (obj);
         } else if (gameState.players[pos].doubleDrink) {
-            gameState.players[pos].drank += (gameState.players[pos].faceUp * 2);
-            obj[pos].drink += (gameState.players[pos].faceUp * 2);
+            gameState.players[pos].drank += (gameState.players[pos].faceUp.value * 2);
+            obj[pos].drink += (gameState.players[pos].faceUp.value * 2);
             gameState.players[pos].doubleDrink = false;
             return (obj);
         }
         gameState.players[pos].drank += gameState.players[pos].faceUp.value;
         obj[pos].drink = gameState.players[pos].faceUp.value;
         return (obj);
-    } else if (gameState.players[pos].faceUp > 3 && gameState.players[pos].faceUp <= 6) {   // carte 4 - 6
+    } else if (gameState.players[pos].faceUp.value > 3 && gameState.players[pos].faceUp.value <= 6) {   // carte 4 - 6
         let index = Math.floor(Math.random() * gameState.players.length)
         while (index == pos || !gameState.players[index].ws) {
             index = Math.floor(Math.random() * gameState.players.length);
@@ -60,7 +60,7 @@ function eventCard(gameState, pos) {
             return (obj);
         }
         if (gameState.players[index].doubleDrink) {
-            obj[inedx].drink += (gameState.players[pos].faceUp.value * 2);
+            obj[index].drink += (gameState.players[pos].faceUp.value * 2);
             gameState.players[index].drank += (gameState.players[pos].faceUp.value * 2);
             gameState.players[index].doubleDrink = false;
             return (obj);
@@ -69,11 +69,11 @@ function eventCard(gameState, pos) {
             gameState.players[index].drank += gameState.players[pos].faceUp.value
             return (obj);
         }
-    } else if (gameState.players[pos].faceUp > 6 && gameState.players[pos].faceUp <= 8) {    // carte 6 - 8 = x2
+    } else if (gameState.players[pos].faceUp.value > 6 && gameState.players[pos].faceUp.value <= 8) {    // carte 6 - 8 = x2
         gameState.players[pos].doubleDrink = true;
-    } else if (gameState.players[pos].faceUp > 8 && gameState.players[pos].faceUp <= 10) {   // carte 8 - 10 = canceled;
+    } else if (gameState.players[pos].faceUp.value > 8 && gameState.players[pos].faceUp.value <= 10) {   // carte 8 - 10 = canceled;
         gameState.players[index].drinkCanceled = true;
-    } else if (gameState.players[pos].faceUp > 10 && gameState.players[pos].faceUp <= 13) { // Dame valet roi
+    } else if (gameState.players[pos].faceUp.value > 10 && gameState.players[pos].faceUp.value <= 13) { // Dame valet roi
         for (let i = 0; i < gameState.players.length; i++) {
             if (gameState.players[i].ws) {
                 if (gameState.players[i].doubleDrink) {
