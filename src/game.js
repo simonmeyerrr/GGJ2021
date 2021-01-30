@@ -74,6 +74,7 @@ class Game {
         const card = this.picked;
 
         obj = obj.filter(el => el.drink != 0);
+
         this.players.forEach((player) => {
             player.ws.sendMessage('pick', {player: play, card, drink: obj});
         });

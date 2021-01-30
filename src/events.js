@@ -44,6 +44,7 @@ function card13(gameState, pos, obj) {
     } else {
         gameState.players[pos].drank += gameState.players[pos].faceUp.value;
         obj[pos].drink += gameState.players[pos].faceUp.value;
+        return (obj);
     }
 }
 
@@ -90,6 +91,7 @@ function card1113(gameState, pos, obj) {
 }
 
 function eventCard(gameState, pos) {
+    
     let obj = gameState.players.map((player, key) => ({
         player: key, drink: 0
     }));
@@ -101,7 +103,7 @@ function eventCard(gameState, pos) {
     } else if (gameState.players[pos].faceUp.value > 6 && gameState.players[pos].faceUp.value <= 8) {
         gameState.players[pos].doubleDrink = true;
     } else if (gameState.players[pos].faceUp.value > 8 && gameState.players[pos].faceUp.value <= 10) {
-        gameState.players[index].drinkCanceled = true;
+        gameState.players[pos].drinkCanceled = true;
     } else if (gameState.players[pos].faceUp.value > 10 && gameState.players[pos].faceUp.value <= 13) {
        obj = card1113(gameState, pos, obj);
     }
