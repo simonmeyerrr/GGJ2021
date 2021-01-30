@@ -26,6 +26,10 @@ class GameClient {
         this._sendMessage("pickRace", race);
     }
 
+    power() {
+        this._sendMessage("sendPower");
+    }
+
     pick() {
         this._sendMessage("pick");
     }
@@ -75,7 +79,7 @@ class GameClient {
                     this.myPlayerNb = i;
             }
             if (this.onPlayerUpdate) this.onPlayerUpdate(this.players, old);
-        } else if (msg.type === "endTurn" || msg.type === "pick" || msg.type === "callChtulu") {
+        } else if (msg.type === "endTurn" || msg.type === "pick" || msg.type === "callChtulu" || msg.type === "sendPower") {
             const old = this.lastEvent;
             this.lastEvent = msg;
             if (this.onGameUpdate) this.onGameUpdate(this.lastEvent, old);
@@ -87,7 +91,7 @@ class GameClient {
 */
         } else if (msg.type === "error") {
             console.log("error", msg);
-            this.error = msg.message;
+            this.error = msg.data.message;
             if (this.onError) this.onError(this.error);
         } else {
             console.log("unknown message", msg);

@@ -118,7 +118,7 @@ SceneGame.prototype.preload = function() {
     const global = this.game.global;
     // Load assets
     this.load.spritesheet("card", "public/image/cards.png", 81, 117);
-    this.load.spritesheet("background", "public/image/background.jpg", {frameWidth: 1920, frameHeight: 1080});
+    this.load.spritesheet("background", "public/image/background.png", {frameWidth: 1920, frameHeight: 1080});
 };
 
 SceneGame.prototype.displayPlayerData = function() {
@@ -156,6 +156,11 @@ SceneGame.prototype.displayGameData = function() {
     // TODO
 };
 
+SceneGame.prototype.displayError = function() {
+    console.log("EEEEEEEEEEEEEERRR", this.game.global.gameClient.error);
+    // TODO
+};
+
 SceneGame.prototype.create = function() {
     console.log("Create Scene Game");
     const global = this.game.global;
@@ -182,12 +187,10 @@ SceneGame.prototype.create = function() {
     }
 
     // Set callback
-    global.gameClient.onPlayerUpdate = () => {
-        this.displayPlayerData();
-    };
-    global.gameClient.onGameUpdate = () => {
-        this.displayGameData();
-    };
+    global.gameClient.onPlayerUpdate = () => this.displayPlayerData();
     this.displayPlayerData();
+    global.gameClient.onGameUpdate = () => this.displayGameData();
     this.displayGameData();
+    global.gameClient.onError = () => this.displayError();
+    if (global.gameClient.error) this.displayError();
 };
