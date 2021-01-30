@@ -188,7 +188,6 @@ const Card = class {
     }
 
     setScale(x, y) {
-        console.log("yo");
         this.card.scale.setTo(x, y);
     }
 
@@ -305,9 +304,9 @@ SceneGame.prototype.displayPlayerData = function() {
             this.texts[i].visible = true;
         } else {
             this.skins[i].visible = false;
-            // this.cards[i].visible = false;
+            this.cards[i].visible = false;
             this.texts[i].visible = false;
-            this.cards[i].frame = 1;
+            this.cards[i].frame = 52;
         }
     }
 };
@@ -342,7 +341,7 @@ SceneGame.prototype.create = function() {
         let skin = this.add.sprite(posPlayerinfo[i].skin.x, posPlayerinfo[i].skin.y, "skin", 0);
         skin.scale.setTo(0.40, 0.40);
         this.skins.push(skin);
-        let card = this.add.sprite(posPlayerinfo[i].card.x, posPlayerinfo[i].card.y, "card", 1);
+        let card = this.add.sprite(posPlayerinfo[i].card.x, posPlayerinfo[i].card.y, "card", 52);
         card.rotation = posPlayerinfo[i].card.rotation
         this.cards.push(card);
         let text = this.add.text(0, 0, "", {
@@ -353,7 +352,7 @@ SceneGame.prototype.create = function() {
             }).setTextBounds(posPlayerinfo[i].name.x, posPlayerinfo[i].name.y, 200, posPlayerinfo[i].name.y);
         this.texts.push(text);
         skin.visible = false;
-        // card.visible = false;
+        card.visible = false;
         text.visible = false;
     }
     this.game.input.onDown.add(() => {
