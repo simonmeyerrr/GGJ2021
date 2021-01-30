@@ -64,14 +64,24 @@ class Game {
         this.sendPlayerData();
     }
 
-    sendUpdateGame() {
-        const players = this.players;
-        const deck = this.deck;
-        const picked = this.picked;
-        const playing = this.playing;
+    sendPick(obj) {
+        const play = this.playing;
+        const card = this.picked;
 
-        player.ws.sendMessage('updateGame', {players, deck, picked, playing});
-        this.picked = null;
+        obj = obj.filter(el => el.drink != 0);
+        player.ws.sendMessage('pick', {player: play, card, drink: obj});
+    }
+
+    sendPickChtulu(total, need) {
+
+        const play = this.playing;
+        const card = this.picked;
+
+        player.ws.sendMessage('pickChtulu', {player: play, card, total, need});
+    }
+
+    sendEnd() {
+        player.ws.sendMessage('end', {player: this.playing});
     }
 
     getPlayerPos(ws) {
@@ -105,13 +115,15 @@ class Game {
             if (pos !== this.playing) {
                 return ws.sendError("not your turn to play", false);
             } else if (msg.type === "pick") {
-                eventGame.pickCard(this, pos);
-                return this.sendUpdateGame();
+                let obj = eventGame.pickCard(this, pos);
+                return this.sendPick(obj);
             } else if (msg.type === "callChtulu") {
-                    return this.sendUpdateGame();
+                let total = eventGame.callChtulu(this, pos);
+                let need = eventGame.getNeed(this);
+                return this.sendPickChtulu(total, need);
             } else if (msg.type === "endTurn") {
                 eventGame.endTurn(this);
-                return this.sendUpdateGame();
+                return this.sendEnd();
             } else {
                 return ws.sendError("invalid message type", false);
             }

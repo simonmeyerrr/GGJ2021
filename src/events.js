@@ -33,16 +33,23 @@ function raceSelectedAll(gameState) {
 }
 
 function eventCard(gameState, pos) {
+    let obj = [];
+    for (let i = 0; i < gameState.players.length; i++)
+        obj.push({player: i, drink: 0});
+
     if (gameState.players[pos].faceUp <= 3) {                                           // carte 1 - 3         
         if (gameState.players[pos].drinkCanceled) {
             gameState.players[pos].drinkCanceled = false;
-            return;
+            return (obj);
         } else if (gameState.players[pos].doubleDrink) {
             gameState.players[pos].drank += (gameState.players[pos].faceUp * 2);
+            obj[pos].drink += (gameState.players[pos].faceUp * 2);
             gameState.players[pos].doubleDrink = false;
-            return;
+            return (obj);
         }
         gameState.players[pos].drank += gameState.players[pos].faceUp.value;
+        obj[pos].drink = gameState.players[pos].faceUp.value;
+        return (obj);
     } else if (gameState.players[pos].faceUp > 3 && gameState.players[pos].faceUp <= 6) {   // carte 4 - 6
         let index = Math.floor(Math.random() * gameState.players.length)
         while (index == pos || !gameState.players[index].ws) {
@@ -50,13 +57,17 @@ function eventCard(gameState, pos) {
         }
         if (gameState.players[index].drinkCanceled) {
             gameState.players[index].drinkCanceled = false;
-            return;
+            return (obj);
         }
         if (gameState.players[index].doubleDrink) {
+            obj[inedx].drink += (gameState.players[pos].faceUp.value * 2);
             gameState.players[index].drank += (gameState.players[pos].faceUp.value * 2);
             gameState.players[index].doubleDrink = false;
+            return (obj);
         } else {
+            obj[index] += gameState.players[pos].faceUp.value;
             gameState.players[index].drank += gameState.players[pos].faceUp.value
+            return (obj);
         }
     } else if (gameState.players[pos].faceUp > 6 && gameState.players[pos].faceUp <= 8) {    // carte 6 - 8 = x2
         gameState.players[pos].doubleDrink = true;
@@ -66,14 +77,18 @@ function eventCard(gameState, pos) {
         for (let i = 0; i < gameState.players.length; i++) {
             if (gameState.players[i].ws) {
                 if (gameState.players[i].doubleDrink) {
+                    obj[i].drink += 2;
                     gameState.players[i].drank += 2;
                 } else if (gameState.players[i].drinkCanceled) {
+                    obj[i].drink += 0;
                     gameState.players[i].drank += 0;
                 } else {
+                    obj[i].drink += 1;
                     gameState.players[i].drank += 1;
                 }
             }
         }
+        return (obj);
     }
 }
 
@@ -87,10 +102,9 @@ function pickCard(gameState, pos) {
     gameState.picked = gameState.players[pos].faceUp;
 }
 
-function callChtulu(gameState) {
-    let RemainingPlayer = gameState.length;
+function callChtulu(gameState, pos) {
+    let RemainingPlayer = gameState.players.length;
     let total = 0;
-    let card;
 
     for (let i = 0; i < gameState.players.length; i++) {
         if (!gameState.players[i].ws)
@@ -99,20 +113,19 @@ function callChtulu(gameState) {
             total += gameState.players[i].faceUp.value;
     }
     deckIsEmpty(gameState);
-    card = gameState.deck.shift();
-    total += card.value;
-    gameState.nextDeck.push(card);
-    deckIsEmpty(gameState);
-    card = gameState.deck.shift();
-    total += card.value;
-    gameState.nextDeck.push(card);
-    deckIsEmpty(gameState);
-    card = null;
+    pickCard(gameState, pos);
+    total += gameState.picked.value
+    return (total);
+}
 
-    if (total >= (RemainingPlayer * 10))
-        gameState.picked = 42;
-    else
-        gameState.picked = 84;
+function getNeed(gameState) {
+    let needed = gameState.players.length;
+
+    for (let i = 0; i < gameState.players.length; i++) {
+        if (!gameState.players[i].ws)
+            needed--;
+    }
+    return (needed * 10);
 }
 
 module.exports = {
@@ -120,5 +133,6 @@ module.exports = {
     setRace,
     raceSelectedAll,
     pickCard,
-    callChtulu
+    callChtulu,
+    getNeed
 }
