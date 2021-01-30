@@ -32,65 +32,80 @@ function raceSelectedAll(gameState) {
     return (true);
 }
 
-function eventCard(gameState, pos) {
-    let obj = [];
-    for (let i = 0; i < gameState.players.length; i++)
-        obj.push({player: i, drink: 0});
-
-    if (gameState.players[pos].faceUp.value <= 3) {                                           // carte 1 - 3
-        if (gameState.players[pos].drinkCanceled) {
-            gameState.players[pos].drinkCanceled = false;
-            return (obj);
-        } else if (gameState.players[pos].doubleDrink) {
-            gameState.players[pos].drank += (gameState.players[pos].faceUp.value * 2);
-            obj[pos].drink += (gameState.players[pos].faceUp.value * 2);
-            gameState.players[pos].doubleDrink = false;
-            return (obj);
-        }
-        gameState.players[pos].drank += gameState.players[pos].faceUp.value;
-        obj[pos].drink = gameState.players[pos].faceUp.value;
+function card13(gameState, pos, obj) {
+    if (gameState.players[pos].drinkCanceled === true) {
+        gameState.players[pos].drinkCanceled = false;
         return (obj);
-    } else if (gameState.players[pos].faceUp.value > 3 && gameState.players[pos].faceUp.value <= 6) {   // carte 4 - 6
-        let index = Math.floor(Math.random() * gameState.players.length)
-        while (index == pos || !gameState.players[index].ws) {
-            index = Math.floor(Math.random() * gameState.players.length);
-        }
-        if (gameState.players[index].drinkCanceled) {
-            gameState.players[index].drinkCanceled = false;
-            return (obj);
-        }
-        if (gameState.players[index].doubleDrink) {
-            obj[index].drink += (gameState.players[pos].faceUp.value * 2);
-            gameState.players[index].drank += (gameState.players[pos].faceUp.value * 2);
-            gameState.players[index].doubleDrink = false;
-            return (obj);
-        } else {
-            obj[index] += gameState.players[pos].faceUp.value;
-            gameState.players[index].drank += gameState.players[pos].faceUp.value
-            return (obj);
-        }
-    } else if (gameState.players[pos].faceUp.value > 6 && gameState.players[pos].faceUp.value <= 8) {    // carte 6 - 8 = x2
-        gameState.players[pos].doubleDrink = true;
-    } else if (gameState.players[pos].faceUp.value > 8 && gameState.players[pos].faceUp.value <= 10) {   // carte 8 - 10 = canceled;
-        gameState.players[index].drinkCanceled = true;
-    } else if (gameState.players[pos].faceUp.value > 10 && gameState.players[pos].faceUp.value <= 13) { // Dame valet roi
-        for (let i = 0; i < gameState.players.length; i++) {
-            if (gameState.players[i].ws) {
-                if (gameState.players[i].doubleDrink) {
-                    obj[i].drink += 2;
-                    gameState.players[i].drank += 2;
-                } else if (gameState.players[i].drinkCanceled) {
-                    obj[i].drink += 0;
-                    gameState.players[i].drank += 0;
-                } else {
-                    obj[i].drink += 1;
-                    gameState.players[i].drank += 1;
-                }
-            }
-        }
+    } else if (gameState.players[pos].doubleDrink === true) {
+        gameState.players[pos].drank += (gameState.players[pos].faceUp.value * 2);
+        obj[pos].drink += (gameState.players[pos].faceUp.value * 2);
+        gameState.players[pos].doubleDrink = false;
+        return (obj);
+    } else {
+        gameState.players[pos].drank += gameState.players[pos].faceUp.value;
+        obj[pos].drink += gameState.players[pos].faceUp.value;
+    }
+}
+
+function card46(gameState, pos, obj) {
+    let index = Math.floor(Math.random() * gameState.players.length)
+
+    while (index == pos || !gameState.players[index].ws) {
+        index = Math.floor(Math.random() * gameState.players.length);
+    }
+    if (gameState.players[index].drinkCanceled === true) {
+        gameState.players[index].drinkCanceled = false;
         return (obj);
     }
-    return obj;
+    else if (gameState.players[index].doubleDrink === true) {
+        obj[index].drink += (gameState.players[pos].faceUp.value * 2);
+        gameState.players[index].drank += (gameState.players[pos].faceUp.value * 2);
+        gameState.players[index].doubleDrink = false;
+        return (obj);
+    } else {
+        obj[index].drink += gameState.players[pos].faceUp.value;
+        gameState.players[index].drank += gameState.players[pos].faceUp.value
+        return (obj);
+    }
+}
+
+function card1113(gameState, pos, obj) {
+    for (let i = 0; i < gameState.players.length; i++) {
+        if (gameState.players[i].ws && pos != i) {
+            if (gameState.players[i].doubleDrink === true) {
+                obj[i].drink += 2;
+                gameState.players[i].drank += 2;
+                gameState.players[i].doubleDrink = false;
+            } else if (gameState.players[i].drinkCanceled === true) {
+                obj[i].drink += 0;
+                gameState.players[i].drank += 0;
+                gameState.players[i].drinkCanceled = false;
+            } else {
+                obj[i].drink += 1;
+                gameState.players[i].drank += 1;
+            }
+        }
+    }
+    return (obj)
+}
+
+function eventCard(gameState, pos) {
+    let obj = gameState.players.map((player, key) => ({
+        player: key, drink: 0
+    }));
+
+    if (gameState.players[pos].faceUp.value <= 3) {
+        obj = card13(gameState, pos, obj);
+    } else if (gameState.players[pos].faceUp.value > 3 && gameState.players[pos].faceUp.value <= 6) {
+        obj = card46(gameState, pos, obj);
+    } else if (gameState.players[pos].faceUp.value > 6 && gameState.players[pos].faceUp.value <= 8) {
+        gameState.players[pos].doubleDrink = true;
+    } else if (gameState.players[pos].faceUp.value > 8 && gameState.players[pos].faceUp.value <= 10) {
+        gameState.players[index].drinkCanceled = true;
+    } else if (gameState.players[pos].faceUp.value > 10 && gameState.players[pos].faceUp.value <= 13) {
+       obj = card1113(gameState, pos, obj);
+    }
+    return (obj);
 }
 
 function pickCard(gameState, pos) {
