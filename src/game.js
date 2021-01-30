@@ -15,6 +15,14 @@ class Game {
         this.picked = null;
     }
 
+    close() {
+        console.log("Closing game " + this.uuid);
+        this.players.forEach((player) => {
+            if (player.ws) player.ws.sendError("game forced closed from server", true);
+            player.ws = null;
+        });
+    }
+
     sendPlayerData() {
         const data = this.players.map((player) => ({
             username: player.username,
@@ -38,7 +46,7 @@ class Game {
         if (this.started) {
             return ws.sendError("game already started", true);
         }
-        if (this.players.length >= 12) {
+        if (this.players.length >= 10) {
             return ws.sendError("too many players in the game", true);
         }
         for (const player of this.players) {
@@ -50,7 +58,7 @@ class Game {
             ws,
             uuid: ws.uuid,
             username: ws.username,
-            race: "nain", faceUp: this.deck.shift(),
+            race: "nain", faceUp: null,
             drank: 0, drinkCanceled: false, doubleDrink: false
         });
         this.sendPlayerData();
@@ -93,7 +101,7 @@ class Game {
         obj = obj.filter(el => el.drink !== 0);
 
         this.players.forEach((player) => {
-            player.ws.sendMessage('pick', {player: play, card, drink: obj});
+            if (player.ws) player.ws.sendMessage('pick', {player: play, card, drink: obj});
         });
     }
 
@@ -101,8 +109,9 @@ class Game {
         obj = obj.filter(el => el.drink !== 0);
         const play = this.playing;
 
+        this.sendPlayerData();
         this.players.forEach((player) => {
-            player.ws.sendMessage('sendPower', {player: play, drink: obj});
+            if (player.ws) player.ws.sendMessage('sendPower', {player: play, drink: obj});
         });
     }
 
@@ -112,14 +121,14 @@ class Game {
         const card = this.picked;
 
         this.players.forEach((player) => {
-            player.ws.sendMessage('pickChtulu', {player: play, card, total, need});
+            if (player.ws) player.ws.sendMessage('callChtulu', {player: play, card, total, need});
         });
     }
 
     sendEnd() {
+        this.sendPlayerData();
         this.players.forEach((player) => {
-            player.ws.sendMessage('endTurn', {player: this.playing});
-            this.sendPlayerData();
+            if (player.ws) player.ws.sendMessage('endTurn', {player: this.playing});
         });
     }
 
@@ -138,11 +147,11 @@ class Game {
 
         if (!this.started) {
             if (msg.type === "start") {
-                if (eventGame.raceSelectedAll(this)) {
+                if (this.players.length < 2) {
+                    return ws.sendError("not enough player to start", false);
+                } else {
                     this.started = true;
                     return this.sendEnd();
-                } else {
-                    return ws.sendError("Cannot start game, all race not selected", false);
                 }
             } else if (msg.type === "pickRace") {
                 eventGame.setRace(this, pos, msg.data);
@@ -155,7 +164,7 @@ class Game {
                 return ws.sendError("not your turn to play", false);
             } else if (msg.type === "sendPower") {
                 if (this.players[pos].drank >= 10) {
-                    this.player[pos].drank -= 10;
+                    this.players[pos].drank = 0;
                     const obj = eventGame.eventRace(this, pos, msg.data);
                     return (this.sendPower(obj));
                 }

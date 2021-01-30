@@ -119,6 +119,7 @@ SceneGame.prototype.preload = function() {
     // Load assets
     this.load.spritesheet("card", "public/image/cards.png", 81, 117);
     this.load.spritesheet("background", "public/image/background.png", {frameWidth: 1920, frameHeight: 1080});
+    this.load.spritesheet('button', 'public/image/button_sprite_sheet.png', 193, 71);
 };
 
 SceneGame.prototype.displayPlayerData = function() {
@@ -145,7 +146,6 @@ SceneGame.prototype.displayPlayerData = function() {
                 this.cards[i].frame = frame
             }
             this.texts[i].setText(players[i].username);
-            console.log("other player", i, players[i]);
         } else {
             this.cards[i].frame = 55;
         }
@@ -153,7 +153,104 @@ SceneGame.prototype.displayPlayerData = function() {
 };
 
 SceneGame.prototype.displayGameData = function() {
-    // TODO
+    const {lastEvent, players, myPlayerNb} = this.game.global.gameClient;
+    if (lastEvent.data.player === myPlayerNb) {
+        switch (lastEvent.type) {
+            case "endTurn":
+                console.log("C'est à ton tour d'agir.");
+                console.log("Tu peux piocher");
+                this.elems.buttonPick.inputEnabled = true;
+                this.elems.buttonPick.visible = true;
+                if (players[myPlayerNb].drank >= 10) {
+                    console.log("Tu peux activer ton pouvoir");
+                    this.elems.buttonPower.inputEnabled = true;
+                    this.elems.buttonPower.visible = true;
+                }
+                if (players.reduce((occ, cur) => (cur.connected && !!cur.faceUp ? occ : false), true)) {
+                    console.log("Tu peux appeller le Kraken");
+                    this.elems.buttonCall.inputEnabled = true;
+                    this.elems.buttonCall.visible = true;
+                }
+                break;
+            case "sendPower":
+                console.log("Tu as utilisé ton pouvoir.");
+                // Choisir qui boit
+                console.log("Tu peux piocher");
+                this.elems.buttonPick.inputEnabled = true;
+                this.elems.buttonPick.visible = true;
+                if (players.reduce((occ, cur) => (!!cur.connected && !!cur.faceUp ? occ : false), true)) {
+                    console.log("Tu peux appeller le Kraken");
+                    this.elems.buttonCall.inputEnabled = true;
+                    this.elems.buttonCall.visible = true;
+                }
+                break;
+            case "pick":
+                console.log("Tu as pioché une carte.");
+                // Choisir qui boit
+                this.game.global.gameClient.endTurn();
+                break;
+            case "callChtulu":
+                console.log("Tu as appellé le Kraken.");
+                // Choisir qui boit
+                this.game.global.gameClient.endTurn();
+                break;
+        }
+    } else {
+        console.log("Hide all buttons");
+        this.elems.buttonPower.inputEnabled = false;
+        this.elems.buttonPower.visible = false;
+        this.elems.buttonPick.inputEnabled = false;
+        this.elems.buttonPick.visible = false;
+        this.elems.buttonCall.inputEnabled = false;
+        this.elems.buttonCall.visible = false;
+        switch (lastEvent.type) {
+            case "endTurn":
+                console.log("C'est au tour de " + players[lastEvent.data.player].username);
+                break;
+            case "sendPower":
+                console.log(players[lastEvent.data.player].username + " a utilisé son pouvoir.");
+                // Choisir qui boit
+                break;
+            case "pick":
+                console.log(players[lastEvent.data.player].username + " a pioché une carte.");
+                // Choisir qui boit
+                break;
+            case "callChtulu":
+                console.log(players[lastEvent.data.player].username + " a appellé le Kraken.");
+                // Choisir qui boit
+                break;
+        }
+    }
+};
+
+const actionSendPower = function() {
+    this.game.global.gameClient.power();
+    this.elems.buttonPower.inputEnabled = false;
+    this.elems.buttonPower.visible = false;
+    this.elems.buttonPick.inputEnabled = false;
+    this.elems.buttonPick.visible = false;
+    this.elems.buttonCall.inputEnabled = false;
+    this.elems.buttonCall.visible = false;
+};
+
+const actionPickCard = function() {
+    this.game.global.gameClient.pick();
+    this.elems.buttonPower.inputEnabled = false;
+    this.elems.buttonPower.visible = false;
+    this.elems.buttonPick.inputEnabled = false;
+    this.elems.buttonPick.visible = false;
+    this.elems.buttonCall.inputEnabled = false;
+    this.elems.buttonCall.visible = false;
+};
+
+const actionCallChtulu = function() {
+    this.game.global.gameClient.callChtulu();
+    this.elems.buttonPower.inputEnabled = false;
+    this.elems.buttonPower.visible = false;
+    this.elems.buttonPick.inputEnabled = false;
+    this.elems.buttonPick.visible = false;
+    this.elems.buttonCall.inputEnabled = false;
+    this.elems.buttonCall.visible = false;
 };
 
 SceneGame.prototype.displayError = function() {
@@ -190,11 +287,20 @@ SceneGame.prototype.create = function() {
         this.texts.push(text);
     }
     this.elems = {
+        buttonPower: this.add.button(this.world.centerX - 95, 300, 'button', actionSendPower, this, 2, 1, 0),
+        buttonPick: this.add.button(this.world.centerX - 95, 500, 'button', actionPickCard, this, 2, 1, 0),
+        buttonCall: this.add.button(this.world.centerX - 95, 700, 'button', actionCallChtulu, this, 2, 1, 0),
         errorMessage: this.add.text(0, 0, "", {
             font: "65px ManicSea", fill: "#ff0000",
             boundsAlignH: "center", boundsAlignV: "middle",
         }).setTextBounds(0, 600, 1980, 600),
     };
+    this.elems.buttonPower.inputEnabled = false;
+    this.elems.buttonPower.visible = false;
+    this.elems.buttonPick.inputEnabled = false;
+    this.elems.buttonPick.visible = false;
+    this.elems.buttonCall.inputEnabled = false;
+    this.elems.buttonCall.visible = false;
 
     // Set callback
     global.gameClient.onPlayerUpdate = () => this.displayPlayerData();
