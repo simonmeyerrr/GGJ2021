@@ -69,7 +69,9 @@ class Game {
         const card = this.picked;
 
         obj = obj.filter(el => el.drink != 0);
-        player.ws.sendMessage('pick', {player: play, card, drink: obj});
+        this.players.forEach((player) => {
+            player.ws.sendMessage('pick', {player: play, card, drink: obj});
+        });
     }
 
     sendPickChtulu(total, need) {
@@ -77,11 +79,15 @@ class Game {
         const play = this.playing;
         const card = this.picked;
 
-        player.ws.sendMessage('pickChtulu', {player: play, card, total, need});
+        this.players.forEach((player) => {
+            player.ws.sendMessage('pickChtulu', {player: play, card, total, need});
+        });
     }
 
     sendEnd() {
-        player.ws.sendMessage('end', {player: this.playing});
+        this.players.forEach((player) => {
+            player.ws.sendMessage('end', {player: this.playing});
+        });
     }
 
     getPlayerPos(ws) {
