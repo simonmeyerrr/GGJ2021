@@ -93,6 +93,7 @@ class Game {
     sendEnd() {
         this.players.forEach((player) => {
             player.ws.sendMessage('endTurn', {player: this.playing});
+            this.sendPlayerData();
         });
     }
 
