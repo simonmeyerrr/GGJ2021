@@ -35,7 +35,7 @@ $('#btn-create').on('click', function() {
 });
 
 $('#btn-join').on('click', function() {
-    var $this = $(this);
+    const $this = $(this);
     $this.button('loading');
     setDisabledAll(true);
     const gameId = $('#input-game-id').val();
@@ -53,3 +53,17 @@ $('#btn-join').on('click', function() {
             setDisabledAll(false);
         });
 });
+
+$('#input-game-id').on('input', function() {
+    console.log("CHAAAANGE");
+    const $this = $(this);
+    if ($this.val() === "" && !$('#btn-join').prop("disabled")) {
+        $('#btn-join').prop("disabled", true);
+    } else if ($this.val() !== "" && $('#btn-join').prop("disabled")) {
+        $('#btn-join').prop("disabled", false);
+    }
+});
+
+if ($('#input-game-id').val() === "") {
+    $('#btn-join').prop("disabled", true);
+}
