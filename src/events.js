@@ -110,6 +110,24 @@ function eventCard(gameState, pos) {
     return (obj);
 }
 
+function eventRace(gameState, pos, ev) {
+    let obj = gameState.players.map((player, key) => ({
+        player: key, drink: 0,
+    }));
+    if (ev == "siren") {
+        obj = siren(gamestate, pos, obj);
+    } else if (eve == "orc") {
+        obj = orc(gamestate, pos, obj);
+    } else if (eve == "gobelin") {
+        obj = gobelin(gamestate, pos, obj);
+    } else if (eve == "mage") {
+        obj = mage(gamestate, pos, obj);
+    } else if (eve == "elf") {
+        obj = elf(gamestate, pos, obj);
+    }
+    return (obj);
+}
+
 function pickCard(gameState, pos) {
     deckIsEmpty(gameState);
     if (gameState.players[pos].faceUp)
@@ -147,11 +165,62 @@ function getNeed(gameState) {
     return (needed * 10);
 }
 
+function siren(gameState, pos, obj) {
+    if (gameState.players[pos].race == "siren") {
+        gameState.players[pos].drinkCanceled = true;
+    }
+    return (obj);
+}
+
+function gobelin(gamestate, pos, obj) {
+    if (gameState.players[pos].race == "gobelin") {
+        for (let i = 0; i < gamestate.players.length; i++) {
+            if (i != pos && gamestate.players[i].ws) {
+                obj[i].drink += 2;
+                gamestate.players[i].drank += 2;
+            }
+        }
+    }
+    return (obj);
+}
+
+function orc(gamestate, pos, obj) {
+    let index = Math.floor(Math.random() * gameState.players.length);
+
+    if (gameState.players[pos].race == "orc") {
+        while (index == pos || !gameState.players[index].ws) {
+            index = Math.floor(Math.random() * gameState.players.length);
+        }
+        obj[index].drink += 10;
+        gamestate.players[index].drank += 10;
+    }
+    return (obj);
+}
+
+function mage(gameState, pos, obj) {
+    if (gameState.players[pos].race == "mage") {
+        gamestate.players[pos].doubleDrink = false;
+    }
+    return (obj);
+}
+
+function elf(gameState, pos, obj) {
+    if (gameState.players[pos].race == "elf") {
+        for (let i = 0; i < gamestate.players.length; i++) {
+            if (i != pos && gamestate.players[i].ws) {
+                gamestate.players[i].doubleDrink = true;
+            }
+        }
+    }
+    return (obj);
+}
+
 module.exports = {
     endTurn,
     setRace,
     raceSelectedAll,
     pickCard,
     callChtulu,
-    getNeed
+    getNeed,
+    eventRace
 }
