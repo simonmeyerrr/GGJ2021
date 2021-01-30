@@ -62,7 +62,21 @@ const createGameHandler = (req, res) => {
     }
 };
 
+const createGameInfoHandler = (req, res) => {
+    const gameId = req.params.id;
+    if (games.hasOwnProperty(gameId)) {
+        return res.json({
+            id: gameId,
+            started: games[gameId].started,
+            players: games[gameId].players.length,
+        })
+    } else {
+        return res.status(404).send();
+    }
+};
+
 module.exports = {
     gameWsHandler,
-    createGameHandler
+    createGameHandler,
+    createGameInfoHandler
 };
