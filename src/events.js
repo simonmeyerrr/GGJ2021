@@ -115,15 +115,17 @@ function eventRace(gameState, pos, ev) {
         player: key, drink: 0,
     }));
     if (ev == "siren") {
-        obj = siren(gamestate, pos, obj);
+        obj = siren(gameState, pos, obj);
     } else if (eve == "orc") {
-        obj = orc(gamestate, pos, obj);
+        obj = orc(gameState, pos, obj);
     } else if (eve == "gobelin") {
-        obj = gobelin(gamestate, pos, obj);
+        obj = gobelin(gameState, pos, obj);
     } else if (eve == "mage") {
-        obj = mage(gamestate, pos, obj);
+        obj = mage(gameState, pos, obj);
     } else if (eve == "elf") {
-        obj = elf(gamestate, pos, obj);
+        obj = elf(gameState, pos, obj);
+    } else if (eve == "nain") {
+        obj = nain(gameState, pos, obj);
     }
     return (obj);
 }
@@ -165,6 +167,18 @@ function getNeed(gameState) {
     return (needed * 10);
 }
 
+function nain(gameState, pos, obj) {
+    if (gameState.players[pos].race == "nain") {
+        for (let i = 0; i < gameState.players.length; i++) {
+            if (gameState.players[i].ws && gameState.players[i].race == "nain") {
+                obj[i].drink += 5;
+                gameState.players[i].drank += 5;
+            }
+        }
+    }
+    return (obj);
+}
+
 function siren(gameState, pos, obj) {
     if (gameState.players[pos].race == "siren") {
         gameState.players[pos].drinkCanceled = true;
@@ -172,19 +186,19 @@ function siren(gameState, pos, obj) {
     return (obj);
 }
 
-function gobelin(gamestate, pos, obj) {
+function gobelin(gameState, pos, obj) {
     if (gameState.players[pos].race == "gobelin") {
-        for (let i = 0; i < gamestate.players.length; i++) {
-            if (i != pos && gamestate.players[i].ws) {
+        for (let i = 0; i < gameState.players.length; i++) {
+            if (i != pos && gameState.players[i].ws) {
                 obj[i].drink += 2;
-                gamestate.players[i].drank += 2;
+                gameState.players[i].drank += 2;
             }
         }
     }
     return (obj);
 }
 
-function orc(gamestate, pos, obj) {
+function orc(gameState, pos, obj) {
     let index = Math.floor(Math.random() * gameState.players.length);
 
     if (gameState.players[pos].race == "orc") {
@@ -192,23 +206,23 @@ function orc(gamestate, pos, obj) {
             index = Math.floor(Math.random() * gameState.players.length);
         }
         obj[index].drink += 10;
-        gamestate.players[index].drank += 10;
+        gameState.players[index].drank += 10;
     }
     return (obj);
 }
 
 function mage(gameState, pos, obj) {
     if (gameState.players[pos].race == "mage") {
-        gamestate.players[pos].doubleDrink = false;
+        gameState.players[pos].doubleDrink = false;
     }
     return (obj);
 }
 
 function elf(gameState, pos, obj) {
     if (gameState.players[pos].race == "elf") {
-        for (let i = 0; i < gamestate.players.length; i++) {
-            if (i != pos && gamestate.players[i].ws) {
-                gamestate.players[i].doubleDrink = true;
+        for (let i = 0; i < gameState.players.length; i++) {
+            if (i != pos && gameState.players[i].ws) {
+                gameState.players[i].doubleDrink = true;
             }
         }
     }
