@@ -12,6 +12,11 @@ SceneLogin.prototype.preload = function() {
     this.load.spritesheet("background", "public/resources/wpp.jpg", {frameWidth: 1920, frameHeight: 1080});
 };
 
+SceneLogin.prototype.displayError = function(err) {
+    console.log("EEEEEEEEEEEEEERRR", err);
+    // TODO
+};
+
 SceneLogin.prototype.create = function() {
     console.log("Create Scene Login");
     const global = this.game.global;
@@ -34,11 +39,14 @@ SceneLogin.prototype.create = function() {
     loginButton.type = "button";
     loginContainer.appendChild(loginButton);
     loginButton.onclick = () => {
-        console.log("CLICK", this.game.global.gameId, loginInput.value);
-        loginContainer.innerHTML = '';
+        if (loginInput.value.length === 0) return;
+        if (loginInput.value.length > 10) return this.displayError("Username too long");
+
         this.game.global.gameClient = new GameClient(
             this.game.global.gameId, loginInput.value
         );
-        this.state.start("SceneLobby");
+        this.game.global.gameClient.onPlayerUpdate = () => this.state.start("SceneLobby");
+        if (this.game.global.gameClient.players.length !== 0) this.state.start("SceneLobby");
+        this.game.global.gameClient.onError = (err) => this.displayError(err);
     };
 };

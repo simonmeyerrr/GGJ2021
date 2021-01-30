@@ -1,7 +1,7 @@
 const cardFct = require('./cards')
 
 function deckIsEmpty(gameState) {
-    if (gameState.deck.length == 0) {
+    if (gameState.deck.length === 0) {
         gameState.deck = cardFct.shuffle(gameState.nextDeck);
         gameState.nextDeck = [];
     }
@@ -31,10 +31,10 @@ function setRace(gameState, pos, race) {
 function raceSelectedAll(gameState) {
     for (let i = 0; i < gameState.players.length; i++) {
         if (gameState.players[i].race == null && gameState.players[i].ws) {
-            return (false);
+            return false;
         }
     }
-    return (true);
+    return true;
 }
 
 function card13(gameState, pos, obj) {
@@ -54,9 +54,9 @@ function card13(gameState, pos, obj) {
 }
 
 function card46(gameState, pos, obj) {
-    let index = Math.floor(Math.random() * gameState.players.length)
+    let index = Math.floor(Math.random() * gameState.players.length);
 
-    while (index == pos || !gameState.players[index].ws) {
+    while (index === pos || !gameState.players[index].ws) {
         index = Math.floor(Math.random() * gameState.players.length);
     }
     if (gameState.players[index].drinkCanceled === true) {
@@ -77,7 +77,7 @@ function card46(gameState, pos, obj) {
 
 function card1113(gameState, pos, obj) {
     for (let i = 0; i < gameState.players.length; i++) {
-        if (gameState.players[i].ws && pos != i) {
+        if (gameState.players[i].ws && pos !== i) {
             if (gameState.players[i].doubleDrink === true) {
                 obj[i].drink += 2;
                 gameState.players[i].drank += 2;
@@ -96,7 +96,7 @@ function card1113(gameState, pos, obj) {
 }
 
 function eventCard(gameState, pos) {
-    
+
     let obj = gameState.players.map((player, key) => ({
         player: key, drink: 0
     }));
@@ -119,17 +119,17 @@ function eventRace(gameState, pos, ev) {
     let obj = gameState.players.map((player, key) => ({
         player: key, drink: 0,
     }));
-    if (ev == "siren") {
+    if (ev === "siren") {
         obj = siren(gameState, pos, obj);
-    } else if (eve == "orc") {
+    } else if (ev === "orc") {
         obj = orc(gameState, pos, obj);
-    } else if (eve == "gobelin") {
+    } else if (ev === "gobelin") {
         obj = gobelin(gameState, pos, obj);
-    } else if (eve == "mage") {
+    } else if (ev === "mage") {
         obj = mage(gameState, pos, obj);
-    } else if (eve == "elf") {
+    } else if (ev === "elf") {
         obj = elf(gameState, pos, obj);
-    } else if (eve == "nain") {
+    } else if (ev === "nain") {
         obj = nain(gameState, pos, obj);
     }
     return (obj);

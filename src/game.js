@@ -50,7 +50,7 @@ class Game {
             ws,
             uuid: ws.uuid,
             username: ws.username,
-            race: 1, faceUp: this.deck.shift(),
+            race: "nain", faceUp: this.deck.shift(),
             drank: 0, drinkCanceled: false, doubleDrink: false
         });
         this.sendPlayerData();
@@ -61,7 +61,7 @@ class Game {
             for (const player of this.players) {
                 if (player.uuid === ws.uuid) {
                     player.ws = null;
-                    if (this.players[this.playing].uuid == ws.uuid) {
+                    if (this.players[this.playing].uuid === ws.uuid) {
                         let i = 0;
                         while (1) {
                             this.playing = (this.playing + 1) % this.players.length;
@@ -90,7 +90,7 @@ class Game {
         const play = this.playing;
         const card = this.picked;
 
-        obj = obj.filter(el => el.drink != 0);
+        obj = obj.filter(el => el.drink !== 0);
 
         this.players.forEach((player) => {
             player.ws.sendMessage('pick', {player: play, card, drink: obj});
@@ -98,7 +98,7 @@ class Game {
     }
 
     sendPower(obj) {
-        obj = obj.filter(el => el.drink != 0);
+        obj = obj.filter(el => el.drink !== 0);
         const play = this.playing;
 
         this.players.forEach((player) => {
@@ -153,13 +153,13 @@ class Game {
         } else {
             if (pos !== this.playing) {
                 return ws.sendError("not your turn to play", false);
-            } else if (msg.type === "power") {
+            } else if (msg.type === "sendPower") {
                 if (this.players[pos].drank >= 10) {
                     this.player[pos].drank -= 10;
                     const obj = eventGame.eventRace(this, pos, msg.data);
                     return (this.sendPower(obj));
                 }
-                return ws.sendError("Not enough energy", false);
+                return ws.sendError("not enough energy", false);
             } else if (msg.type === "pick") {
                 let obj = eventGame.pickCard(this, pos);
                 return this.sendPick(obj);
