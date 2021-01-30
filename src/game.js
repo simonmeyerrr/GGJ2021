@@ -1,3 +1,6 @@
+const eventGame = require('./events');
+const cardFct = require('./cards');
+
 class Game {
     constructor(uuid) {
         console.log("Game created", uuid);
@@ -6,6 +9,10 @@ class Game {
         this.started = false;
         this.players = [];
         this.playing = 0;
+        this.hasPicked = false;
+        this.nextDeck = [];
+        this.deck = cardFct.shuffle(cardFct.createDeck());
+        this.picked = null;
     }
 
     sendPlayerData() {
@@ -35,6 +42,7 @@ class Game {
             uuid: ws.uuid,
             username: ws.username,
             race: null, faceUp: null,
+            drank: 0, drinkCanceled: false, doubleDrink: false
         });
         this.sendPlayerData();
     }
@@ -57,7 +65,13 @@ class Game {
     }
 
     sendUpdateGame() {
-        // envoie les infos a tous les joueurs
+        const players = this.players;
+        const deck = this.deck;
+        const picked = this.picked;
+        const playing = this.playing;
+
+        player.ws.sendMessage('updateGame', {players, deck, picked, playing});
+        this.picked = null;
     }
 
     getPlayerPos(ws) {
@@ -75,12 +89,15 @@ class Game {
 
         if (!this.started) {
             if (msg.type === "start") {
-                // check si la game peut start (race selected)
-                this.started = true;
-                return this.sendUpdateGame();
+                if (eventGame.raceSelectedAll(this)) {
+                    this.started = true;
+                    return this.sendUpdateGame();
+                } else {
+                    return ws.sendError("Cannot start game, all race not selected", false);
+                }
             } else if (msg.type === "pickRace") {
-                // set la race
-                this.sendPlayerData();
+                eventGame.setRace(this, pos, msg.data);
+                return this.sendPlayerData();
             } else {
                 return ws.sendError("invalid message type", false);
             }
@@ -88,13 +105,12 @@ class Game {
             if (pos !== this.playing) {
                 return ws.sendError("not your turn to play", false);
             } else if (msg.type === "pick") {
-                // tire la carte, l'applique
+                eventGame.pickCard(this, pos);
                 return this.sendUpdateGame();
             } else if (msg.type === "callChtulu") {
-                // tire la carte, l'applique
-                return this.sendUpdateGame();
+                    return this.sendUpdateGame();
             } else if (msg.type === "endTurn") {
-                // calcul le joueur suivant
+                eventGame.endTurn(this);
                 return this.sendUpdateGame();
             } else {
                 return ws.sendError("invalid message type", false);
