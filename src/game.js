@@ -27,7 +27,7 @@ class Game {
         }));
         const total = this.players.length;
         const connected = this.players.filter(el => el.ws).length;
-        const faceUpConnected = this.player.filter(el => el.ws && el.faceUp)
+        const faceUpConnected = this.players.filter(el => el.ws && el.faceUp)
 
         this.players.forEach((player) => {
             if (player.ws) player.ws.sendMessage('players', {list: data, total, connected, faceUpConnected});
@@ -67,7 +67,7 @@ class Game {
                             this.playing = (this.playing + 1) % this.players.length;
                             if (this.players[this.playing].ws) {
                                 break;
-                            } else if (i >= (gameState.players.length + 1)) {
+                            } else if (i >= (this.players.length + 1)) {
                                 this.playing = -1;
                                 break;
                             }
