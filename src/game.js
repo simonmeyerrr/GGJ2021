@@ -90,7 +90,8 @@ class Game {
 
     sendPower(obj) {
         obj = obj.filter(el => el.drink != 0);
-    
+        const play = this.playing;
+
         this.players.forEach((player) => {
             player.ws.sendMessage('sendPower', {player: play, drink: obj});
         });
@@ -149,6 +150,7 @@ class Game {
                     const obj = eventGame.eventRace(this, pos, msg.data);
                     return (this.sendPower(obj));
                 }
+                return ws.sendError("Not enough energy", false);
             } else if (msg.type === "pick") {
                 let obj = eventGame.pickCard(this, pos);
                 return this.sendPick(obj);
