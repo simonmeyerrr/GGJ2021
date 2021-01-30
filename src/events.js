@@ -32,7 +32,7 @@ function raceSelectedAll(gameState) {
     return (true);
 }
 
-function eventCard() {
+function eventCard(gameState, pos) {
     if (gameState.players[pos].faceUp <= 3) {                                           // carte 1 - 3         
         if (gameState.players[pos].drinkCanceled) {
             gameState.players[pos].drinkCanceled = false;
@@ -72,6 +72,7 @@ function pickCard(gameState, pos) {
     gameState.players[pos].faceUp = gameState.deck.shift();
     gameState.hasPicked = true;
     eventCard(gameState, pos);
+    gameState.picked = gameState.players[pos].faceUp.value;
 }
 
 function callChtulu(gameState) {

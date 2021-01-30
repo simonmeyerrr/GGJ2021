@@ -12,6 +12,7 @@ class Game {
         this.hasPicked = false;
         this.nextDect = [];
         this.deck = cardFct.shuffle(cardFct.createDeck());
+        this.picked = null;
     }
 
     sendPlayerData() {
@@ -64,7 +65,12 @@ class Game {
     }
 
     sendUpdateGame() {
-        // envoie les infos a tous les joueurs
+        const players = this.players;
+        const deck = this.deck;
+        const picked = this.picked
+
+        player.ws.sendMessage('updateGame', {players, deck, picked});
+        this.picked = null;
     }
 
     getPlayerPos(ws) {
