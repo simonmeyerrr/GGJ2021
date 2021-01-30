@@ -72,7 +72,7 @@ function pickCard(gameState, pos) {
     gameState.players[pos].faceUp = gameState.deck.shift();
     gameState.hasPicked = true;
     eventCard(gameState, pos);
-    gameState.picked = gameState.players[pos].faceUp.value;
+    gameState.picked = gameState.players[pos].faceUp;
 }
 
 function callChtulu(gameState) {
