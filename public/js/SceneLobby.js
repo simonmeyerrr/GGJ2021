@@ -22,5 +22,6 @@ SceneLobby.prototype.create = function() {
 
     this.input.onDown.add(() => {
         global.gameClient.start();
+        this.state.start("SceneGame");
     });
 };
