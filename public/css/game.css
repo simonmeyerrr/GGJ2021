@@ -60,6 +60,28 @@ canvas {
     border: 5px #2c3e50 solid;
 }
 
+@media screen and (max-width: 1000px) {
+
+    #login-container {
+        height: 20vh;
+    }
+
+    #login-title {
+        font-size: 200%;
+        margin-bottom: 1vh;
+    }
+
+    #login-input {
+        height: 4vh;
+        font-size: 150%;
+        margin-bottom: 2vh;
+    }
+    
+    #login-button {
+        font-size: 100%;
+    }
+}
+
 
 /* --------- Fade ---------- */
 @keyframes fadein {
