@@ -88,6 +88,14 @@ class Game {
         });
     }
 
+    sendPower(obj) {
+        obj = obj.filter(el => el.drink != 0);
+    
+        this.players.forEach((player) => {
+            player.ws.sendMessage('sendPower', {player: play, drink: obj});
+        });
+    }
+
     sendPickChtulu(total, need) {
 
         const play = this.playing;
@@ -135,6 +143,12 @@ class Game {
         } else {
             if (pos !== this.playing) {
                 return ws.sendError("not your turn to play", false);
+            } else if (msg.type === "power") {
+                if (this.players[pos].drank >= 10) {
+                    this.player[pos].drank -= 10;
+                    const obj = eventGame.eventRace(this, pos, msg.data);
+                    return (this.sendPower(obj));
+                }
             } else if (msg.type === "pick") {
                 let obj = eventGame.pickCard(this, pos);
                 return this.sendPick(obj);
