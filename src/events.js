@@ -37,7 +37,7 @@ function eventCard(gameState, pos) {
     for (let i = 0; i < gameState.players.length; i++)
         obj.push({player: i, drink: 0});
 
-    if (gameState.players[pos].faceUp <= 3) {                                           // carte 1 - 3         
+    if (gameState.players[pos].faceUp <= 3) {                                           // carte 1 - 3
         if (gameState.players[pos].drinkCanceled) {
             gameState.players[pos].drinkCanceled = false;
             return (obj);
@@ -90,6 +90,7 @@ function eventCard(gameState, pos) {
         }
         return (obj);
     }
+    return obj;
 }
 
 function pickCard(gameState, pos) {
@@ -98,8 +99,9 @@ function pickCard(gameState, pos) {
         gameState.nextDeck.push(gameState.players[pos].faceUp);
     gameState.players[pos].faceUp = gameState.deck.shift();
     gameState.hasPicked = true;
-    eventCard(gameState, pos);
+    const obj = eventCard(gameState, pos);
     gameState.picked = gameState.players[pos].faceUp;
+    return obj;
 }
 
 function callChtulu(gameState, pos) {

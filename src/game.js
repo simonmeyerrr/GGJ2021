@@ -17,8 +17,13 @@ class Game {
 
     sendPlayerData() {
         const data = this.players.map((player) => ({
-           username: player.username,
-           connected: !!player.ws,
+            username: player.username,
+            connected: !!player.ws,
+            race: player.race,
+            faceUp: player.faceUp,
+            drank: player.drank,
+            drinkCanceled: player.drinkCanceled,
+            doubleDrink: player.doubleDrink,
         }));
         this.players.forEach((player) => {
             if (player.ws) player.ws.sendMessage('players', {list: data});
@@ -41,7 +46,7 @@ class Game {
             ws,
             uuid: ws.uuid,
             username: ws.username,
-            race: null, faceUp: null,
+            race: 1, faceUp: null,
             drank: 0, drinkCanceled: false, doubleDrink: false
         });
         this.sendPlayerData();
@@ -86,7 +91,7 @@ class Game {
 
     sendEnd() {
         this.players.forEach((player) => {
-            player.ws.sendMessage('end', {player: this.playing});
+            player.ws.sendMessage('endTurn', {player: this.playing});
         });
     }
 
@@ -107,7 +112,7 @@ class Game {
             if (msg.type === "start") {
                 if (eventGame.raceSelectedAll(this)) {
                     this.started = true;
-                    return this.sendUpdateGame();
+                    return this.sendEnd();
                 } else {
                     return ws.sendError("Cannot start game, all race not selected", false);
                 }

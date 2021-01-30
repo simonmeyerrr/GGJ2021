@@ -4,16 +4,19 @@
     <title> Game </title>
     <meta charset="utf-8"/>
     <link rel="stylesheet" href="/public/css/index.css">
+    <script src="https://cdn.jsdelivr.net/npm/phaser-ce@2.16.1/build/phaser.js"></script>
 </head>
 <body>
-    <h1> Game </h1>
-    <div id="connection"></div>
-    <script type="module">
-        import * as game from '/public/js/game.js';
-        import GameConnection from '/public/js/game_connection.js';
+    <div id="login-container"></div>
 
+    <script type="text/javascript" src="/public/js/GameClient.js"></script>
+    <script type="text/javascript" src="/public/js/GameDisplay2.js"></script>
+    <script type="text/javascript">
         window.onload = () => {
-            const gameId = game.getGameId();
+            const splitedPath = window.location.pathname.split("/");
+            const gameId = splitedPath[splitedPath.length - 1];
+
+            startDisplay(gameId);
         }
     </script>
 </body>
