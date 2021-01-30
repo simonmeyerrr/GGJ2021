@@ -67,9 +67,10 @@ class Game {
     sendUpdateGame() {
         const players = this.players;
         const deck = this.deck;
-        const picked = this.picked
+        const picked = this.picked;
+        const playing = this.playing;
 
-        player.ws.sendMessage('updateGame', {players, deck, picked});
+        player.ws.sendMessage('updateGame', {players, deck, picked, playing});
         this.picked = null;
     }
 
