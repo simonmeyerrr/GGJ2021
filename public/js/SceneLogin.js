@@ -9,7 +9,7 @@ SceneLogin.prototype.preload = function() {
     this.scale.pageAlignVertically = true;
     this.stage.backgroundColor = 0x448844;
     // Load assets
-    this.load.spritesheet("background", "public/image/background.jpg", {frameWidth: 1920, frameHeight: 1080});
+    this.load.spritesheet("background", "public/image/background.png", {frameWidth: 1920, frameHeight: 1080});
 };
 
 SceneLogin.prototype.create = function() {

@@ -3,7 +3,7 @@ const SceneLobby = function() {};
 SceneLobby.prototype.preload = function() {
     console.log("Preload Scene Lobby");
     // Load assets
-    this.load.spritesheet("background", "public/image/background.jpg", {frameWidth: 1920, frameHeight: 1080});
+    this.load.spritesheet("background", "public/image/background.png", {frameWidth: 1920, frameHeight: 1080});
     this.load.spritesheet('button', 'public/image/button_sprite_sheet.png', 193, 71);
 };
 
