@@ -9,6 +9,7 @@ class GameClient {
 
         this.onPlayerUpdate = null;
         this.onGameUpdate = null;
+        this.onError = null;
 
         this._initWebsocket();
     }
@@ -87,6 +88,7 @@ class GameClient {
         } else if (msg.type === "error") {
             console.log("error", msg);
             this.error = msg.message;
+            if (this.onError) this.onError(this.error);
         } else {
             console.log("unknown message", msg);
         }
