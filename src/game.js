@@ -26,8 +26,8 @@ class Game {
             doubleDrink: player.doubleDrink,
         }));
         const total = this.players.length;
-        const connected = this.players.filter(el => el.ws).length;
-        const faceUpConnected = this.players.filter(el => el.ws && el.faceUp)
+        const connected = this.players.filter(el => !!el.ws).length;
+        const faceUpConnected = this.players.filter(el => el.ws && el.faceUp).length;
 
         this.players.forEach((player) => {
             if (player.ws) player.ws.sendMessage('players', {list: data, total, connected, faceUpConnected});
@@ -50,7 +50,7 @@ class Game {
             ws,
             uuid: ws.uuid,
             username: ws.username,
-            race: 1, faceUp: null,
+            race: 1, faceUp: this.deck.shift(),
             drank: 0, drinkCanceled: false, doubleDrink: false
         });
         this.sendPlayerData();
