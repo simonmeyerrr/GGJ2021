@@ -10,7 +10,7 @@ class Game {
         this.players = [];
         this.playing = 0;
         this.hasPicked = false;
-        this.nextDect = [];
+        this.nextDeck = [];
         this.deck = cardFct.shuffle(cardFct.createDeck());
         this.picked = null;
     }
