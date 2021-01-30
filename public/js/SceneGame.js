@@ -175,8 +175,10 @@ SceneGame.prototype.displayPlayerData = function() {
                 frame += 13 * (players[i].faceUp.color === 'C' ? 0 : players[i].faceUp.color === 'D' ? 1 : players[i].faceUp.color === 'H' ? 2 : 3)
                 this.cards[i].frame = frame
             }
+            this.skins[i].visible = true;
+            this.cards[i].visible = true;
+            this.texts[i].visible = true;
             this.texts[i].setText(players[i].username);
-            this
         } else if (players[i].connected) {
             if (!players[i].faceUp) {
                 this.cards[i].frame = 52;
@@ -187,8 +189,13 @@ SceneGame.prototype.displayPlayerData = function() {
                 this.cards[i].frame = frame
             }
             this.texts[i].setText(players[i].username);
-            console.log("other player", i, players[i]);
+            this.skins[i].visible = true;
+            this.cards[i].visible = true;
+            this.texts[i].visible = true;
         } else {
+            this.skins[i].visible = false;
+            this.cards[i].visible = false;
+            this.texts[i].visible = false;
             this.cards[i].frame = 55;
         }
     }
@@ -222,12 +229,16 @@ SceneGame.prototype.create = function() {
         let card = this.add.sprite(posPlayerinfo[i].card.x, posPlayerinfo[i].card.y, "card", 55);
         card.rotation = posPlayerinfo[i].card.rotation
         this.cards.push(card);
-        let text = this.add.text(posPlayerinfo[i].name.x, posPlayerinfo[i].name.y, "jean-cule", {
+        let text = this.add.text(0, 0, "", {
             font: "40px ManicSea",
             fill: "#0e0b0b",
-            align: "center",
-        });
+            textAlign: "center",
+            boundsAlignH: "center"
+            }).setTextBounds(posPlayerinfo[i].name.x, posPlayerinfo[i].name.y, 200, posPlayerinfo[i].name.y);
         this.texts.push(text);
+        skin.visible = false;
+        card.visible = false;
+        text.visible = false;
     }
     this.elems = {
         errorMessage: this.add.text(0, 0, "", {
