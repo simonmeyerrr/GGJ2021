@@ -35,6 +35,7 @@ SceneLobby.prototype.preload = function() {
     this.load.spritesheet('buttonRight', 'public/image/right.png', 108, 116);
     this.load.spritesheet('buttonLeft', 'public/image/left.png', 108, 116);
     this.load.spritesheet('buttonValid', 'public/image/valid.png', 108, 116);
+    this.load.spritesheet('buttonShare', 'public/image/share.png', 108, 116);
     this.load.spritesheet('avatars', 'public/image/avatars.png', 500, 500);
     this.load.spritesheet('desc', 'public/image/desc.png', 818.8, 173);
 };
@@ -115,8 +116,8 @@ SceneLobby.prototype.create = function() {
         buttonPrev: this.add.button(this.world.centerX - 54 - 300, 250, "buttonLeft", this.prevAvatar, this, 2, 1, 0),
         avatar: this.add.sprite(this.world.centerX - 250, 80, "avatars", 0),
         desc_img: this.add.sprite(550, 550, "desc", 0),
-        buttonStart: this.add.button(this.world.centerX - 95, 400, 'buttonValid', actionStart, this, 2, 1, 0),
-        // buttonInvite: this.add.button(this.world.centerX - 95, 600, 'button', actionInvite, this, 2, 1, 0),
+        buttonInvite: this.add.button(50, 50, 'buttonShare', actionInvite, this, 2, 1, 0),
+        buttonStart: this.add.button(50, 200, 'buttonValid', actionStart, this, 2, 1, 0),
         name: this.add.text(
             0, 0,
             user.username,
@@ -133,6 +134,26 @@ SceneLobby.prototype.create = function() {
             {
                 font: "30px ManicSea",
                 fill: "black",
+                textAlign: "center",
+                boundsAlignH: "center"
+            }
+        ),
+        launch: this.add.text(
+            175, 235,
+            "Lancer la partie",
+            {
+                font: "40px ManicSea",
+                fill: "white",
+                textAlign: "center",
+                boundsAlignH: "center"
+            }
+        ),
+        share: this.add.text(
+            175, 85,
+            "Copier le lien de la partie",
+            {
+                font: "40px ManicSea",
+                fill: "white",
                 textAlign: "center",
                 boundsAlignH: "center"
             }
