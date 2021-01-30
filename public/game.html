@@ -7,6 +7,14 @@
 </head>
 <body>
     <h1> Game </h1>
-    <script src="/public/js/game.js"></script>
+    <div id="connection"></div>
+    <script type="module">
+        import * as game from '/public/js/game.js';
+        import GameConnection from '/public/js/game_connection.js';
+
+        window.onload = () => {
+            const gameId = game.getGameId();
+        }
+    </script>
 </body>
 </html>
