@@ -305,6 +305,10 @@ SceneGame.prototype.preload = function() {
     this.load.spritesheet("perroquet", "public/image/3_perroques.png", 239, 196);
     this.load.spritesheet("bulle", "public/image/bulle_game.png", 1920, 350);
     this.load.spritesheet('button', 'public/image/button_sprite_sheet.png', 193, 71);
+    this.load.spritesheet('draw', 'public/image/draw.png', 108, 116);
+    this.load.spritesheet('finish', 'public/image/valid.png', 108, 116);
+    this.load.spritesheet('ability', 'public/image/power.png', 108, 116);
+    this.load.spritesheet('call', 'public/image/call.png', 108, 116);
 
 };
 
@@ -367,13 +371,19 @@ SceneGame.prototype.displayGameData = function() {
                 printDialog("C'est à ton tour", this);
                 this.elems.buttonPick.inputEnabled = true;
                 this.elems.buttonPick.visible = true;
+                this.elems.textPick.inputEnabled = true;
+                this.elems.textPick.visible = true;
                 if (players[myPlayerNb].drank >= 10) {
                     this.elems.buttonPower.inputEnabled = true;
                     this.elems.buttonPower.visible = true;
+                    this.elems.textPower.inputEnabled = true;
+                    this.elems.textPower.visible = true;
                 }
                 if (players.reduce((occ, cur) => (cur.connected && !!cur.faceUp ? occ : false), true)) {
                     this.elems.buttonCall.inputEnabled = true;
                     this.elems.buttonCall.visible = true;
+                    this.elems.textCall.inputEnabled = true;
+                    this.elems.textCall.visible = true;
                 }
                 break;
             case "sendPower":
@@ -383,9 +393,13 @@ SceneGame.prototype.displayGameData = function() {
                 console.log("Afficher gages liés au pouvoir"); // TODO mais relou
                 this.elems.buttonPick.inputEnabled = true;
                 this.elems.buttonPick.visible = true;
+                this.elems.textPick.inputEnabled = true;
+                this.elems.textPick.visible = true;
                 if (players.reduce((occ, cur) => (!!cur.connected && !!cur.faceUp ? occ : false), true)) {
                     this.elems.buttonCall.inputEnabled = true;
                     this.elems.buttonCall.visible = true;
+                    this.elems.textCall.inputEnabled = true;
+                    this.elems.textCall.visible = true;
                 }
                 break;
             case "pick":
@@ -396,6 +410,8 @@ SceneGame.prototype.displayGameData = function() {
                     // for (const drink of lastEvent.data.drinks) {} drink -> {player: 0, drink: 2}
                     this.elems.buttonEnd.inputEnabled = true;
                     this.elems.buttonEnd.visible = true;
+                    this.elems.textEnd.inputEnabled = true;
+                    this.elems.textEnd.visible = true;
                 });
                 break;
             case "callChtulu":
@@ -407,6 +423,8 @@ SceneGame.prototype.displayGameData = function() {
                     // if (lastEvent.data.total >= lastEvent.data.needed) tout le monde cul sec sauf toi else tu bois cul sec
                     this.elems.buttonEnd.inputEnabled = true;
                     this.elems.buttonEnd.visible = true;
+                    this.elems.textEnd.inputEnabled = true;
+                    this.elems.textEnd.visible = true;
                 });
                 break;
         }
@@ -467,12 +485,20 @@ const actionEndTurn = function() {
 SceneGame.prototype.hideAllActions = function() {
     this.elems.buttonPower.inputEnabled = false;
     this.elems.buttonPower.visible = false;
+    this.elems.textPower.inputEnabled = false;
+    this.elems.textPower.visible = false;
     this.elems.buttonPick.inputEnabled = false;
     this.elems.buttonPick.visible = false;
+    this.elems.textPick.inputEnabled = false;
+    this.elems.textPick.visible = false;
     this.elems.buttonCall.inputEnabled = false;
     this.elems.buttonCall.visible = false;
+    this.elems.textCall.inputEnabled = false;
+    this.elems.textCall.visible = false;
     this.elems.buttonEnd.inputEnabled = false;
     this.elems.buttonEnd.visible = false;
+    this.elems.textEnd.inputEnabled = false;
+    this.elems.textEnd.visible = false;
 };
 
 SceneGame.prototype.displayError = function() {
@@ -533,10 +559,46 @@ SceneGame.prototype.create = function() {
 
     this.elems = {...this.elems,
         mainCard: this.add.sprite(drawDeck.x, drawDeck.y, "card", 52),
-        buttonPower: this.add.button(this.world.centerX - 95, 300, 'button', actionSendPower, this, 2, 1, 0),
-        buttonPick: this.add.button(this.world.centerX - 95, 500, 'button', actionPickCard, this, 2, 1, 0),
-        buttonCall: this.add.button(this.world.centerX - 95, 700, 'button', actionCallChtulu, this, 2, 1, 0),
-        buttonEnd: this.add.button(this.world.centerX - 95, 600, 'button', actionEndTurn, this, 2, 1, 0),
+        buttonPower: this.add.button(1762, 350, 'ability', actionSendPower, this, 2, 1, 0),
+        textPower: this.add.text(
+            1330, 375, "Activer sa capacité",
+            {
+                font: "50px ManicSea",
+                fill: "white",
+                textAlign: "center",
+                boundsAlignH: "center"
+            }
+        ),
+        buttonPick: this.add.button(50, 350, 'draw', actionPickCard, this, 2, 1, 0),
+        textPick: this.add.text(
+            175, 375, "Piocher une carte",
+            {
+                font: "50px ManicSea",
+                fill: "white",
+                textAlign: "center",
+                boundsAlignH: "center"
+            }
+        ),
+        buttonCall: this.add.button(50, 500, 'call', actionCallChtulu, this, 2, 1, 0),
+        textCall: this.add.text(
+            175, 525, "Tenter d'appeler le Kraken",
+            {
+                font: "50px ManicSea",
+                fill: "white",
+                textAlign: "center",
+                boundsAlignH: "center"
+            }
+        ),
+        buttonEnd: this.add.button(50, 350, 'finish', actionEndTurn, this, 2, 1, 0),
+        textEnd: this.add.text(
+            175, 375, "Terminer son tour",
+            {
+                font: "50px ManicSea",
+                fill: "white",
+                textAlign: "center",
+                boundsAlignH: "center"
+            }
+        ),
         errorMessage: this.add.text(0, 0, "", {
             font: "65px ManicSea", fill: "#ff0000",
             boundsAlignH: "center", boundsAlignV: "middle",

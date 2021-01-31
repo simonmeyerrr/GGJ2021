@@ -103,10 +103,10 @@ SceneLobby.prototype.create = function() {
 
     this.elems = {
         background: this.add.sprite(0, 0, "background", 0),
-        buttonNext: this.add.button(this.world.centerX - 54 + 300, 250, "buttonRight", this.nextAvatar, this, 2, 1, 0),
-        buttonPrev: this.add.button(this.world.centerX - 54 - 300, 250, "buttonLeft", this.prevAvatar, this, 2, 1, 0),
-        avatar: this.add.sprite(this.world.centerX - 250, 80, "avatars", 0),
-        desc_img: this.add.sprite(550, 550, "desc", 0),
+        buttonNext: this.add.button(this.world.centerX - 54 + 300, 350, "buttonRight", this.nextAvatar, this, 2, 1, 0),
+        buttonPrev: this.add.button(this.world.centerX - 54 - 300, 350, "buttonLeft", this.prevAvatar, this, 2, 1, 0),
+        avatar: this.add.sprite(this.world.centerX - 250, 180, "avatars", 0),
+        desc_img: this.add.sprite(550, 650, "desc", 0),
         buttonInvite: this.add.button(50, 50, 'buttonShare', actionInvite, this, 2, 1, 0),
         buttonStart: this.add.button(50, 200, 'buttonValid', actionStart, this, 2, 1, 0),
         name: this.add.text(
@@ -118,9 +118,9 @@ SceneLobby.prototype.create = function() {
                 textAlign: "center",
                 boundsAlignH: "center"
             }
-        ).setTextBounds(900, 10, 120, 50),
+        ).setTextBounds(900, 110, 120, 50),
         desc: this.add.text(
-            600, 580,
+            600, 680,
             "",
             {
                 font: "30px ManicSea",
