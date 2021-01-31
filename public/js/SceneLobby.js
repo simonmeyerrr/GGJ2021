@@ -98,12 +98,8 @@ SceneLobby.prototype.prevAvatar = function() {
 };
 
 SceneLobby.prototype.create = function() {
-    console.log("Create Scene Lobby");
     const global = this.game.global;
-
-    const user = this.game.global.gameClient.players[this.game.global.gameClient.myPlayerNb];
-    console.log(user);
-    console.log(avatar_frame[user.race]);
+    const user = global.gameClient.players[global.gameClient.myPlayerNb];
 
     this.elems = {
         background: this.add.sprite(0, 0, "background", 0),
