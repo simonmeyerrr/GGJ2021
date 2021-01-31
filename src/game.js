@@ -18,7 +18,7 @@ class Game {
     close() {
         console.log("Closing game " + this.uuid);
         this.players.forEach((player) => {
-            if (player.ws) player.ws.sendError("game forced closed from server", true);
+            if (player.ws) player.ws.sendError("La partie a été fermée de force par le serveur", true);
             player.ws = null;
         });
     }
@@ -44,14 +44,14 @@ class Game {
 
     addPlayer(ws) {
         if (this.started) {
-            return ws.sendError("game already started", true);
+            return ws.sendError("La partie a déjà démarré", true);
         }
         if (this.players.length >= 10) {
-            return ws.sendError("too many players in the game", true);
+            return ws.sendError("La partie est pleine", true);
         }
         for (const player of this.players) {
             if (player.username === ws.username) {
-                return ws.sendError("username already used", true);
+                return ws.sendError("Pseudonyme déjà utilisé", true);
             }
         }
         this.players.push({
@@ -148,7 +148,7 @@ class Game {
         if (!this.started) {
             if (msg.type === "start") {
                 if (this.players.length < 2) {
-                    return ws.sendError("not enough player to start", false);
+                    return ws.sendError("Deux joueurs au moins sont nécéssaires", false);
                 } else {
                     this.started = true;
                     return this.sendEnd();
@@ -157,18 +157,18 @@ class Game {
                 eventGame.setRace(this, pos, msg.data);
                 return this.sendPlayerData();
             } else {
-                return ws.sendError("invalid message type", false);
+                return ws.sendError("Type de message invalide", false);
             }
         } else {
             if (pos !== this.playing) {
-                return ws.sendError("not your turn to play", false);
+                return ws.sendError("Ce n'est pas à ton tour de jouer", false);
             } else if (msg.type === "sendPower") {
                 if (this.players[pos].drank >= 10) {
                     this.players[pos].drank = 0;
                     const obj = eventGame.eventRace(this, pos, msg.data);
                     return (this.sendPower(obj));
                 }
-                return ws.sendError("not enough energy", false);
+                return ws.sendError("Tu n'as pas assez d'energie", false);
             } else if (msg.type === "pick") {
                 let obj = eventGame.pickCard(this, pos);
                 return this.sendPick(obj);
@@ -180,7 +180,7 @@ class Game {
                 eventGame.endTurn(this);
                 return this.sendEnd();
             } else {
-                return ws.sendError("invalid message type", false);
+                return ws.sendError("Type de message invalide", false);
             }
         }
     }

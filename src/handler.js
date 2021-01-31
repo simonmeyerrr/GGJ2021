@@ -29,11 +29,11 @@ const gameWsHandler = (ws, req) => {
             if (games.hasOwnProperty(gameId))
                 games[gameId].addPlayer(ws);
             else
-                ws.sendError("game does not exists", true);
+                ws.sendError("La partie n'existe pas/plus", true);
         } else if (ws.username) {
             games[gameId].messageReceived(ws, msg);
         } else {
-            ws.sendError("you have to join the game", true);
+            ws.sendError("Vous devez rejoindre la partie", true);
         }
     });
 
