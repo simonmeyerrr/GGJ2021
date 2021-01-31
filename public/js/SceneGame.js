@@ -433,7 +433,7 @@ SceneGame.prototype.displayGameData = function() {
                         break;
                     case "orc":
                         if (lastEvent.data.target === myPlayerNb) {
-                            dialog = "Le hasard s'est retourné contre toi, bois 10 gorgées !";
+                            dialog = "Le hasard s'est retourné contre toi,\nbois 10 gorgées !";
                         } else {
                             dialog = "Le hasard a tranché, " + players[lastEvent.data.target].username + " bois 10 gorgées !";
                         }
@@ -445,7 +445,7 @@ SceneGame.prototype.displayGameData = function() {
                         dialog = "Tu as retiré les maléfices qui te touchaient.";
                         break;
                     case "elf":
-                        dialog = "Tu as doublé les prochaines georgées de tes adversaires.";
+                        dialog = "Tu as doublé les prochaines georgées de\ntes adversaires.";
                         break;
                 }
                 printDialog(dialog, this, () => {
@@ -507,7 +507,7 @@ SceneGame.prototype.displayGameData = function() {
                     if (lastEvent.data.total >= lastEvent.data.need) {
                         dialog = "Le Kraken est apparu!\nTout les autres doivent faire cul sec.";
                     } else {
-                        dialog = "Le Kraken n'est pas apparu... Tu dois faire cul sec.";
+                        dialog = "Le Kraken n'est pas apparu...\nTu dois faire cul sec.";
                     }
                     printDialog(dialog, this, () => {
                         this.elems.buttonEnd.inputEnabled = true;
@@ -545,10 +545,10 @@ SceneGame.prototype.displayGameData = function() {
                         }
                         break;
                     case "siren":
-                        dialog = players[lastEvent.data.player].username + " sera immunisé contre ses prochaines georgées.";
+                        dialog = players[lastEvent.data.player].username + " sera immunisé contre ses\nprochaines georgées.";
                         break;
                     case "mage":
-                        dialog = players[lastEvent.data.player].username + " a retiré les maléfices qui le touchaient.";
+                        dialog = players[lastEvent.data.player].username + " a retiré les maléfices qui\nle touchaient.";
                         break;
                     case "elf":
                         dialog = "Tes prochaines georgées ont été doublées.";
@@ -584,10 +584,10 @@ SceneGame.prototype.displayGameData = function() {
                         }
                     }
                     if (card.value >= 7 && card.value <= 8) {
-                        dialog = players[lastEvent.data.player].username + " est vulnérable, ses prochains gorgées seront doublées !";
+                        dialog = players[lastEvent.data.player].username + " est vulnérable, ses prochains gorgées\nseront doublées !";
                     }
                     if (card.value >= 9 && card.value <= 10) {
-                        dialog = "Arf... " + players[lastEvent.data.player].username + " est immunisé pour le prochain tour !";
+                        dialog = "Arf... " + players[lastEvent.data.player].username + " est immunisé pour le prochain\ntour !";
                     }
                     if (card.value >= 11 && card.value <= 13) {
                         let drink = undefined;
@@ -610,7 +610,7 @@ SceneGame.prototype.displayGameData = function() {
                     if (lastEvent.data.total >= lastEvent.data.need) {
                         dialog = "Le Kraken est apparu!\nTout le monde doit faire cul sec sauf " + players[lastEvent.data.player].username + ".";
                     } else {
-                        dialog = "Le Kraken n'est pas apparu... " + players[lastEvent.data.player].username + " doit faire cul sec.";
+                        dialog = "Le Kraken n'est pas apparu...\n" + players[lastEvent.data.player].username + " doit faire cul sec.";
                     }
                     printDialog(dialog, this);
                 });
