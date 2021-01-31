@@ -253,13 +253,12 @@ const Card = class {
     }
 
     flipCard(frame, game, x, y, rotate, cd) {
-        this.frame = frame
         this.flipTween = game.add.tween(this.card.scale).to({
             x: 0,
             y: gameOptions.flipZoom
         }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
 
-    window.dispatchEvent(new Event('soundCard'));
+        window.dispatchEvent(new Event('soundCard'));
 
         // once the card is flipped, we change its frame and call the second tween
         this.flipTween.onComplete.add(function(){
@@ -315,13 +314,49 @@ const Card = class {
         this.flipCard(frame, game, posPlayerinfo[player].card.x, posPlayerinfo[player].card.y, posPlayerinfo[player].card.rotation, cb);
         this.moveTo(game.game.world.width / 2 -  120, game.game.world.height / 2 - 300, game);
     }
-    animateKraken(game, card, player, cb) {
+    animateKraken(game, card, player, cd) {
         let frame = 0;
         frame += card.value - 1;
         frame += 13 * (card.color === 'C' ? 0 : card.color === 'D' ? 1 : card.color === 'H' ? 2 : 3);
         this.reset();
+        this.flipTween2 = game.add.tween(this.card.scale).to({
+            x: 0,
+            y: gameOptions.flipZoom
+        }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
 
-        this.flipCard(frame, game, posPlayerinfo[player].card.x, posPlayerinfo[player].card.y, posPlayerinfo[player].card.rotation, cb);
+        window.dispatchEvent(new Event('soundCard'));
+
+        // once the card is flipped, we change its frame and call the second tween
+        this.flipTween2.onComplete.add(function(){
+            this.card.frame = frame;
+            this.backFlipTween2.start();
+        }, this);
+
+        // second tween: we complete the flip and lower the card
+        this.backFlipTween2 = game.add.tween(this.card.scale).to({
+            x: 4,
+            y: 4
+        }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
+        this.backFlipTween2.onComplete.add(() => {
+            game.time.events.add(2000, () => {
+                this.revertflipTween = game.add.tween(this.card.scale).to({
+                    x: 0,
+                    y: gameOptions.flipZoom
+                }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
+
+                window.dispatchEvent(new Event('soundCard'));
+
+                // once the card is flipped, we change its frame and call the second tween
+                this.revertflipTween.onComplete.add(function(){
+                    this.card.frame = 52;
+                    this.setSlowScaling(1, 1, game);
+                    this.moveTo(drawDeck.x, drawDeck.y, game, cd);
+                    this.isFlipping = false;
+                }, this);
+                this.revertflipTween.start();
+            });
+        });
+        this.flipTween2.start();
         this.moveTo(game.game.world.width / 2 -  120, game.game.world.height / 2 - 300, game);
     }
 };
@@ -334,7 +369,7 @@ SceneGame.prototype.preload = function() {
     // Load assets
     this.load.spritesheet("card", "public/image/cards.png", 81, 117);
     this.load.spritesheet("skin", "public/image/avatars.png", 500, 500);
-    this.load.spritesheet("beer", "public/image/beer.png", 143, 180);
+    this.load.spritesheet("beer", "public/image/beer.png", 155, 180);
     this.load.spritesheet("background", "public/image/background.png", {frameWidth: 1920, frameHeight: 1080});
     this.load.spritesheet("mage", "public/image/mage.png", {frameWidth: 1920, frameHeight: 1080});
     this.load.spritesheet("table", "public/image/table.png", {frameWidth: 1920, frameHeight: 1080});
@@ -494,7 +529,7 @@ SceneGame.prototype.displayGameData = function() {
                 break;
             case "callChtulu":
                 printDialog("Tu tentes d'appeler le Kraken...", this);
-                this.elems.mainCardObj.animate(this, lastEvent.data.card, lastEvent.data.player, () => {
+                this.elems.mainCardObj.animateKraken(this, lastEvent.data.card, lastEvent.data.player, () => {
                     let dialog = "";
                     if (lastEvent.data.total >= lastEvent.data.need) {
                         dialog = "Le Kraken est apparu!\nTout les autres doivent faire cul sec.";
@@ -597,7 +632,7 @@ SceneGame.prototype.displayGameData = function() {
             case "callChtulu":
                 printDialog(players[lastEvent.data.player].username + " tente d'appeller le Kraken...", this);
                 // Potentielement animation kraken en meme temps
-                this.elems.mainCardObj.animate(this, lastEvent.data.card, lastEvent.data.player, () => {
+                this.elems.mainCardObj.animateKraken(this, lastEvent.data.card, lastEvent.data.player, () => {
                     let dialog = "";
                     if (lastEvent.data.total >= lastEvent.data.need) {
                         dialog = "Le Kraken est apparu!\nTout le monde doit faire cul sec sauf " + players[lastEvent.data.player].username + ".";
