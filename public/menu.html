@@ -35,6 +35,13 @@
         <div class="image02"></div>
     </div>
 
+    <audio id="soundButton" src="public/audio/button.mp3"></audio>
+    <script>
+        window.addEventListener('soundButton', function(e) {
+            document.getElementById("soundButton").play();
+        }, false);
+    </script>
+
     <script type="text/javascript" src="/public/js/menu.js"></script>
 </body>
 </html>

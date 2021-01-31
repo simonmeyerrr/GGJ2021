@@ -259,6 +259,8 @@ const Card = class {
             y: gameOptions.flipZoom
         }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
 
+    window.dispatchEvent(new Event('soundCard'));
+
         // once the card is flipped, we change its frame and call the second tween
         this.flipTween.onComplete.add(function(){
             this.card.frame = frame;
@@ -620,21 +622,25 @@ SceneGame.prototype.displayGameData = function() {
 };
 
 const actionSendPower = function() {
+    window.dispatchEvent(new Event('soundButton'));
     this.hideAllActions();
     this.game.global.gameClient.power();
 };
 
 const actionPickCard = function() {
+    window.dispatchEvent(new Event('soundButton'));
     this.hideAllActions();
     this.game.global.gameClient.pick();
 };
 
 const actionCallChtulu = function() {
+    window.dispatchEvent(new Event('soundButton'));
     this.hideAllActions();
     this.game.global.gameClient.callChtulu();
 };
 
 const actionEndTurn = function() {
+    window.dispatchEvent(new Event('soundButton'));
     this.hideAllActions();
     this.game.global.gameClient.endTurn();
 };
