@@ -24,11 +24,11 @@ $('#btn-create').on('click', function() {
     const $this = $(this);
     $this.button('loading');
     setDisabledAll(true);
+    window.dispatchEvent(new Event('soundButton'));
     createGame()
         .then(redirectToGame)
         .catch((err) => {
             console.log(err);
-            // display error;
             $this.button('reset');
             setDisabledAll(false);
         });

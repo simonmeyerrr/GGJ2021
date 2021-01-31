@@ -42,9 +42,11 @@ SceneLobby.prototype.preload = function() {
 
 const actionStart = function() {
     this.game.global.gameClient.start();
+    window.dispatchEvent(new Event('soundButton'));
 };
 
 const actionInvite = function() {
+    window.dispatchEvent(new Event('soundButton'));
     return navigator.clipboard.writeText(window.location);
 };
 
@@ -77,6 +79,7 @@ SceneLobby.prototype.displayError = function() {
 };
 
 SceneLobby.prototype.nextAvatar = function() {
+    window.dispatchEvent(new Event('soundButton'));
     const user = this.game.global.gameClient.players[this.game.global.gameClient.myPlayerNb];
     this.elems.avatar.frame++;
     this.elems.desc_img.frame++;
@@ -85,6 +88,7 @@ SceneLobby.prototype.nextAvatar = function() {
 };
 
 SceneLobby.prototype.prevAvatar = function() {
+    window.dispatchEvent(new Event('soundButton'));
     const user = this.game.global.gameClient.players[this.game.global.gameClient.myPlayerNb];
     if (this.elems.avatar.frame == 0) {
         this.elems.avatar.frame = 5;

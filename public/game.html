@@ -53,11 +53,20 @@
     </div>
 
     <audio id="music" src="public/audio/cthulu.mp3"></audio>
+    <audio id="soundButton" src="public/audio/button.mp3"></audio>
+    <audio id="soundCard" src="public/audio/card.mp3"></audio>
     <script>
+        window.addEventListener('soundButton', function(e) {
+            document.getElementById("soundButton").play();
+        }, false);
+        window.addEventListener('soundCard', function(e) {
+            document.getElementById("soundCard").play();
+        }, false);
         var music = document.getElementById("music");
         music.play();
         music.loop = true;
         music.volume = 0.5;
+        
 
     </script>
 
