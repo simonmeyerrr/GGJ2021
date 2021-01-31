@@ -45,8 +45,8 @@ class GameClient {
 
     _initWebsocket() {
         this._ws = new WebSocket(
-            window.location.protocol === "https:" ? 'wss' : 'ws' +
-                '://' + window.location.hostname + ':' + window.location.port + '/api/game/' + this.gameId
+            (window.location.protocol === "https:" ? 'wss' : 'ws') +
+                '://' + window.location.hostname + ':' + window.location.port + '/api/ws/' + this.gameId
         );
         this._ws.onerror = (err) => {
             this.error = err.toString();
