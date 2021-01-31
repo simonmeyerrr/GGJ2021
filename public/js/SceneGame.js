@@ -213,11 +213,12 @@ function displayLetterByLetterText(textObject, message, game, onCompleteCallback
 
 }
 
-function printDialog(message, game) {
+function printDialog(message, game, cb) {
 
-    displayLetterByLetterText(game.elems.dialog, message, game, function() {
+    displayLetterByLetterText(game.elems.dialog, message, game, () => {
         // stuff you want to do at the end of the animation
         // eg. this.input.onDown.addOnce(this.start, this);
+        if (cb) cb();
     });
 }
 
@@ -397,68 +398,71 @@ SceneGame.prototype.displayPlayerData = function() {
 
 SceneGame.prototype.displayGameData = function() {
     const {lastEvent, players, myPlayerNb} = this.game.global.gameClient;
+    let dialog = "";
     if (lastEvent.data.player === myPlayerNb) {
         switch (lastEvent.type) {
             case "endTurn":
-                printDialog("C'est à ton tour de jouer !", this);
-                this.elems.buttonPick.inputEnabled = true;
-                this.elems.buttonPick.visible = true;
-                this.elems.textPick.inputEnabled = true;
-                this.elems.textPick.visible = true;
-                if (players[myPlayerNb].drank >= 10) {
-                    this.elems.buttonPower.inputEnabled = true;
-                    this.elems.buttonPower.visible = true;
-                    this.elems.textPower.inputEnabled = true;
-                    this.elems.textPower.visible = true;
-                }
-                if (players.reduce((occ, cur) => (cur.connected && !!cur.faceUp ? occ : false), true)) {
-                    this.elems.buttonCall.inputEnabled = true;
-                    this.elems.buttonCall.visible = true;
-                    this.elems.textCall.inputEnabled = true;
-                    this.elems.textCall.visible = true;
-                }
+                printDialog("C'est à ton tour de jouer !", this, () => {
+                    this.elems.buttonPick.inputEnabled = true;
+                    this.elems.buttonPick.visible = true;
+                    this.elems.textPick.inputEnabled = true;
+                    this.elems.textPick.visible = true;
+                    if (players[myPlayerNb].drank >= 10) {
+                        this.elems.buttonPower.inputEnabled = true;
+                        this.elems.buttonPower.visible = true;
+                        this.elems.textPower.inputEnabled = true;
+                        this.elems.textPower.visible = true;
+                    }
+                    if (players.reduce((occ, cur) => (cur.connected && !!cur.faceUp ? occ : false), true)) {
+                        this.elems.buttonCall.inputEnabled = true;
+                        this.elems.buttonCall.visible = true;
+                        this.elems.textCall.inputEnabled = true;
+                        this.elems.textCall.visible = true;
+                    }
+                });
                 break;
             case "sendPower":
                 printDialog("Tu as utilisé ton pouvoir.", this);
+                dialog = "";
                 switch (players[lastEvent.data.player].race) {
                     case "nain":
-                        console.log("Toi et tes amis nains buvez 5 gorgées."); // TODO afficher perroquet
+                        dialog = "Toi et tes amis nains buvez 5 gorgées.";
                         break;
                     case "gobelin":
-                        console.log("Tout le monde boit 2 gorgées sauf toi."); // TODO afficher perroquet
+                        dialog = "Tout le monde boit 2 gorgées sauf toi.";
                         break;
                     case "orc":
                         if (lastEvent.data.target === myPlayerNb) {
-                            console.log("Le hasard s'est retourné contre toi, bois 10 gorgées !"); // TODO afficher perroquet
+                            dialog = "Le hasard s'est retourné contre toi,\nbois 10 gorgées !";
                         } else {
-                            console.log("Le hasard a tranché, " + players[lastEvent.data.target].username + " bois 10 gorgées !"); // TODO afficher perroquet
+                            dialog = "Le hasard a tranché, " + players[lastEvent.data.target].username + " bois 10 gorgées !";
                         }
                         break;
                     case "siren":
-                        console.log("Tu sera immunisé contre tes prochaines georgées."); // TODO afficher perroquet
+                        dialog = "Tu sera immunisé contre tes prochaines georgées.";
                         break;
                     case "mage":
-                        console.log("Tu as retiré les maléfices qui te touchaient."); // TODO afficher perroquet
+                        dialog = "Tu as retiré les maléfices qui te touchaient.";
                         break;
                     case "elf":
-                        console.log("Tu as doublé les prochaines georgées de tes adversaires."); // TODO afficher perroquet
+                        dialog = "Tu as doublé les prochaines georgées de\ntes adversaires.";
                         break;
                 }
+                printDialog(dialog, this, () => {
+                    this.elems.buttonPick.inputEnabled = true;
+                    this.elems.buttonPick.visible = true;
+                    this.elems.textPick.visible = true;
+                    if (players.reduce((occ, cur) => (!!cur.connected && !!cur.faceUp ? occ : false), true)) {
+                        this.elems.buttonCall.inputEnabled = true;
+                        this.elems.buttonCall.visible = true;
+                        this.elems.textCall.visible = true;
+                    }
+                });
                 // potentiellement animation en lien avec
-                this.elems.buttonPick.inputEnabled = true;
-                this.elems.buttonPick.visible = true;
-                this.elems.textPick.inputEnabled = true;
-                this.elems.textPick.visible = true;
-                if (players.reduce((occ, cur) => (!!cur.connected && !!cur.faceUp ? occ : false), true)) {
-                    this.elems.buttonCall.inputEnabled = true;
-                    this.elems.buttonCall.visible = true;
-                    this.elems.textCall.inputEnabled = true;
-                    this.elems.textCall.visible = true;
-                }
                 break;
             case "pick":
                 const card = lastEvent.data.card;
-                let dialog = "Tu as pioché un" + (card.value == 12 ? "e " : " ");
+                dialog = "Tu as pioché un" + (card.value == 12 ? "e " : " ");
                 dialog += getNameOfCard(card.value);
                 dialog += " de " + colors_name[card.color] + " !";
                 printDialog(dialog, this);
@@ -480,7 +484,7 @@ SceneGame.prototype.displayGameData = function() {
                             dialog = players[drinks[0].player].username + " doit prendre " + drinks[0].drink + " gorgée" + (drinks[0].drink > 1 ? "s !" : " !");
                     }
                     if (card.value >= 7 && card.value <= 8) {
-                        dialog = "Tu es vulnérable, tes prochains gorgées seront doublées...";
+                        dialog = "Tu es vulnérable, tes prochains gorgées seront\ndoublées...";
                     }
                     if (card.value >= 9 && card.value <= 10) {
                         dialog = "Parfait ! Tu es immunisé pour le prochain tour.";
@@ -488,30 +492,28 @@ SceneGame.prototype.displayGameData = function() {
                     if (card.value >= 11 && card.value <= 13) {
                         dialog = "Tournée générale ! Gorgées pour tout les autres !";
                     }
-                    printDialog(dialog, this);
+                    printDialog(dialog, this, () => {
+                        this.elems.buttonEnd.inputEnabled = true;
+                        this.elems.buttonEnd.visible = true;
+                        this.elems.textEnd.visible = true;
+                    });
                     //
-                    this.elems.buttonEnd.inputEnabled = true;
-                    this.elems.buttonEnd.visible = true;
-                    this.elems.textEnd.inputEnabled = true;
-                    this.elems.textEnd.visible = true;
                 });
                 break;
             case "callChtulu":
                 printDialog("Tu tentes d'appeler le Kraken...", this);
-                console.log("Tu as appelé le Kraken."); // TODO perroquet dit ca
-                // Potentielement animation kraken en meme temps
                 this.elems.mainCardObj.animate(this, lastEvent.data.card, lastEvent.data.player, () => {
                     let dialog = "";
                     if (lastEvent.data.total >= lastEvent.data.need) {
                         dialog = "Le Kraken est apparu!\nTout les autres doivent faire cul sec.";
                     } else {
-                        dialog = "Le Kraken n'est pas apparu... Tu dois faire cul sec.";
+                        dialog = "Le Kraken n'est pas apparu...\nTu dois faire cul sec.";
                     }
-                    printDialog(dialog, this);
-                    this.elems.buttonEnd.inputEnabled = true;
-                    this.elems.buttonEnd.visible = true;
-                    this.elems.textEnd.inputEnabled = true;
-                    this.elems.textEnd.visible = true;
+                    printDialog(dialog, this, () => {
+                        this.elems.buttonEnd.inputEnabled = true;
+                        this.elems.buttonEnd.visible = true;
+                        this.elems.textEnd.visible = true;
+                    });
                 });
                 break;
         }
@@ -527,35 +529,36 @@ SceneGame.prototype.displayGameData = function() {
                 switch (players[lastEvent.data.player].race) {
                     case "nain":
                         if (players[myPlayerNb].race === "nain") {
-                            console.log("Toi et tes amis nains buvez 5 gorgées."); // TODO afficher perroquet
+                            dialog = "Toi et tes amis nains buvez 5 gorgées.";
                         } else {
-                            console.log("Les nains boivent tous 5 gorgées."); // TODO afficher perroquet
+                            dialog = "Les nains boivent tous 5 gorgées.";
                         }
                         break;
                     case "gobelin":
-                        console.log("Tout le monde boit 2 gorgées sauf " + players[lastEvent.data.player].username + "."); // TODO afficher perroquet
+                        dialog = "Tout le monde boit 2 gorgées sauf " + players[lastEvent.data.player].username + ".";
                         break;
                     case "orc":
                         if (lastEvent.data.target === myPlayerNb) {
-                            console.log("Le hasard a eu raison de toi, bois 10 gorgées !"); // TODO afficher perroquet
+                            dialog = "Le hasard a eu raison de toi, bois 10 gorgées !";
                         } else {
-                            console.log("Le hasard a tranché, " + players[lastEvent.data.target].username + " bois 10 gorgées !"); // TODO afficher perroquet
+                            dialog = "Le hasard a tranché, " + players[lastEvent.data.target].username + " bois 10 gorgées !";
                         }
                         break;
                     case "siren":
-                        console.log(players[lastEvent.data.player].username + " sera immunisé contre ses prochaines georgées."); // TODO afficher perroquet
+                        dialog = players[lastEvent.data.player].username + " sera immunisé contre ses\nprochaines georgées.";
                         break;
                     case "mage":
-                        console.log(players[lastEvent.data.player].username + " a retiré les maléfices qui le touchaient."); // TODO afficher perroquet
+                        dialog = players[lastEvent.data.player].username + " a retiré les maléfices qui\nle touchaient.";
                         break;
                     case "elf":
-                        console.log("Tes prochaines georgées ont été doublées."); // TODO afficher perroquet
+                        dialog = "Tes prochaines georgées ont été doublées.";
                         break;
                 }
+                printDialog(dialog, this);
                 break;
             case "pick":
                 const card = lastEvent.data.card;
-                let dialog = players[lastEvent.data.player].username + " a pioché un" + (card.value == 12 ? "e " : " ");
+                dialog = players[lastEvent.data.player].username + " a pioché un" + (card.value == 12 ? "e " : " ");
                 dialog += getNameOfCard(card.value);
                 dialog += " de " + colors_name[card.color] + " !";
                 printDialog(dialog, this);
@@ -581,10 +584,10 @@ SceneGame.prototype.displayGameData = function() {
                         }
                     }
                     if (card.value >= 7 && card.value <= 8) {
-                        dialog = players[lastEvent.data.player].username + " est vulnérable, ses prochains gorgées seront doublées !";
+                        dialog = players[lastEvent.data.player].username + " est vulnérable, ses prochains gorgées\nseront doublées !";
                     }
                     if (card.value >= 9 && card.value <= 10) {
-                        dialog = "Arf... " + players[lastEvent.data.player].username + " est immunisé pour le prochain tour !";
+                        dialog = "Arf... " + players[lastEvent.data.player].username + " est immunisé pour le prochain\ntour !";
                     }
                     if (card.value >= 11 && card.value <= 13) {
                         let drink = undefined;
@@ -607,7 +610,7 @@ SceneGame.prototype.displayGameData = function() {
                     if (lastEvent.data.total >= lastEvent.data.need) {
                         dialog = "Le Kraken est apparu!\nTout le monde doit faire cul sec sauf " + players[lastEvent.data.player].username + ".";
                     } else {
-                        dialog = "Le Kraken n'est pas apparu... " + players[lastEvent.data.player].username + " doit faire cul sec.";
+                        dialog = "Le Kraken n'est pas apparu...\n" + players[lastEvent.data.player].username + " doit faire cul sec.";
                     }
                     printDialog(dialog, this);
                 });
