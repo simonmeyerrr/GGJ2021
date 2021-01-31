@@ -52,11 +52,13 @@
         <div class="image02"></div>
     </div>
 
-    <audio id="myAudio" src="public/audio/cthulu.mp3"></audio>
+    <audio id="music" src="public/audio/cthulu.mp3"></audio>
     <script>
-        var myAudio = document.getElementById("myAudio");
-        myAudio.play();
-        myAudio.loop = true;
+        var music = document.getElementById("music");
+        music.play();
+        music.loop = true;
+        music.volume = 0.5;
+
     </script>
 
 
