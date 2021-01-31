@@ -15,6 +15,7 @@ app.get('/api/game/:id', handler.createGameInfoHandler);
 app.ws('/api/ws/:id', handler.gameWsHandler);
 
 app.get('/', (req, res) => res.sendFile(__dirname + '/public/menu.html'));
+app.get('/favicon.ico', (req, res) => res.sendFile(__dirname + '/public/favicon.ico'));
 app.get('/:id', (req, res) => res.sendFile(__dirname + '/public/game.html'));
 app.use('/public', express.static('public'));
 
