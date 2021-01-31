@@ -168,6 +168,37 @@ const drawDeck = {
     y: 1080 / 2 + 70
 }
 
+const dialogPos = {
+    x: 550,
+    y: 80,
+    width: 1000,
+    line_length: 40
+}
+
+function displayNextLetter() {
+
+    this.textObject.text = this.message.substr(0, this.counter);
+    this.counter += 1;
+
+}
+
+function displayLetterByLetterText(textObject, message, game, onCompleteCallback) {
+
+    let timerEvent = game.time.events.repeat(80, message.length, displayNextLetter,
+        { textObject: textObject, message: message, counter: 1 });
+
+    timerEvent.timer.onComplete.addOnce(onCompleteCallback, this);
+
+}
+
+function printDialog(message, game) {
+
+    displayLetterByLetterText(game.elems.dialog, message, game, function() {
+        // stuff you want to do at the end of the animation
+        // eg. this.input.onDown.addOnce(this.start, this);
+    });
+}
+
 const Card = class {
     constructor(card) {
         this.isFlipping = false;
@@ -332,7 +363,8 @@ SceneGame.prototype.displayGameData = function() {
     if (lastEvent.data.player === myPlayerNb) {
         switch (lastEvent.type) {
             case "endTurn":
-                console.log("C'est à ton tour"); // TODO perroquet dit ca
+                console.log("C'est à ton tour"); // TODO perroquet dit c
+                printDialog("C'est à ton tour", this);
                 this.elems.buttonPick.inputEnabled = true;
                 this.elems.buttonPick.visible = true;
                 if (players[myPlayerNb].drank >= 10) {
@@ -346,6 +378,7 @@ SceneGame.prototype.displayGameData = function() {
                 break;
             case "sendPower":
                 console.log("Tu as utilisé ton pouvoir."); // TODO perroquet dit ca
+                printDialog("Tu as utilisé ton pouvoir.", this);
                 // potentiellement animation en lien avec
                 console.log("Afficher gages liés au pouvoir"); // TODO mais relou
                 this.elems.buttonPick.inputEnabled = true;
@@ -356,6 +389,7 @@ SceneGame.prototype.displayGameData = function() {
                 }
                 break;
             case "pick":
+                printDialog("Tu as pioché une carte.", this);
                 console.log("Tu as pioché une carte."); // TODO perroquet dit ca
                 this.elems.mainCardObj.animate(this, lastEvent.data.card, lastEvent.data.player, () => {
                     console.log("afficher qui boit quoi"); // TODO relou
@@ -365,6 +399,7 @@ SceneGame.prototype.displayGameData = function() {
                 });
                 break;
             case "callChtulu":
+                printDialog("Tu as appellé le Kraken.", this);
                 console.log("Tu as appellé le Kraken."); // TODO perroquet dit ca
                 // Potentielement animation kraken en meme temps
                 this.elems.mainCardObj.animate(this, lastEvent.data.card, lastEvent.data.player, () => {
@@ -379,14 +414,17 @@ SceneGame.prototype.displayGameData = function() {
         this.hideAllActions();
         switch (lastEvent.type) {
             case "endTurn":
+                printDialog("C'est au tour de " + players[lastEvent.data.player].username, this);
                 console.log("C'est au tour de " + players[lastEvent.data.player].username); // TODO perroquet dit ca
                 break;
             case "sendPower":
+                printDialog(players[lastEvent.data.player].username + " a utilisé son pouvoir.", this);
                 console.log(players[lastEvent.data.player].username + " a utilisé son pouvoir."); // TODO perroquet dit ca
                 // potentielement animation en lien avec
                 console.log("Afficher gages liés au pouvoir"); // TODO mais relou
                 break;
             case "pick":
+                printDialog(players[lastEvent.data.player].username + " a pioché une carte.", this);
                 console.log(players[lastEvent.data.player].username + " a pioché une carte."); // TODO perroquet dit ca
                 this.elems.mainCardObj.animate(this, lastEvent.data.card, lastEvent.data.player, () => {
                     console.log("afficher qui boit quoi"); // TODO relou
@@ -394,6 +432,7 @@ SceneGame.prototype.displayGameData = function() {
                 });
                 break;
             case "callChtulu":
+                printDialog(players[lastEvent.data.player].username + " a appellé le Kraken.", this);
                 console.log(players[lastEvent.data.player].username + " a appellé le Kraken.");
                 // Potentielement animation kraken en meme temps
                 this.elems.mainCardObj.animate(this, lastEvent.data.card, lastEvent.data.player, () => {
@@ -455,6 +494,7 @@ SceneGame.prototype.create = function() {
         texts: [],
         cards: [],
         skins: [],
+        dialog: null
     };
 
     this.bulle = this.add.sprite(0, 0, "bulle", 0);
@@ -465,6 +505,12 @@ SceneGame.prototype.create = function() {
     this.perroquet.animations.add("breathe", [0, 1]);
     this.perroquet.animations.play("breathe", 2, true);
 
+    this.elems.dialog = this.add.text(0, 0, "", {
+        font: "40px ManicSea",
+        fill: "#000000",
+        textAlign: "center",
+        boundsAlignH: "center"
+    }).setTextBounds(dialogPos.x, dialogPos.y, dialogPos.width, dialogPos.y);
 
     for (let i = 0; i < 10; ++i) {
         const card = this.add.sprite(posPlayerinfo[i].card.x, posPlayerinfo[i].card.y, "card", 52);
