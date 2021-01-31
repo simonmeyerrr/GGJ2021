@@ -81,14 +81,14 @@ function card1113(gameState, pos, obj) {
     for (let i = 0; i < gameState.players.length; i++) {
         if (gameState.players[i].ws && pos !== i) {
             if (gameState.players[i].doubleDrink === true) {
-                obj[i].drink += 2;
-                gameState.players[i].drank += 2;
+                obj[i].drink += (gameState.players[pos].faceUp.value - 10) * 2;
+                gameState.players[i].drank += (gameState.players[pos].faceUp.value - 10) * 2;
                 gameState.players[i].doubleDrink = false;
             } else if (gameState.players[i].drinkCanceled === true) {
                 gameState.players[i].drinkCanceled = false;
             } else {
-                obj[i].drink += 1;
-                gameState.players[i].drank += 1;
+                obj[i].drink += gameState.players[pos].faceUp.value - 10;
+                gameState.players[i].drank += gameState.players[pos].faceUp.value - 10;
             }
         }
     }

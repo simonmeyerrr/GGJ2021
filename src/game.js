@@ -70,16 +70,12 @@ class Game {
                 if (player.uuid === ws.uuid) {
                     player.ws = null;
                     if (this.players[this.playing].uuid === ws.uuid) {
-                        let i = 0;
-                        while (1) {
-                            this.playing = (this.playing + 1) % this.players.length;
-                            if (this.players[this.playing].ws) {
-                                break;
-                            } else if (i >= (this.players.length + 1)) {
-                                this.playing = -1;
+                        for (let i = 1; i < this.players.length; i++) {
+                            if (this.players[(this.playing + i) % this.players.length].ws) {
+                                this.playing = (this.playing + i) % this.players.length;
+                                this.sendEnd();
                                 break;
                             }
-                            i++;
                         }
                     }
                 }

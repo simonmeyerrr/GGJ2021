@@ -440,7 +440,7 @@ SceneGame.prototype.displayGameData = function() {
                         this.elems.textPower.inputEnabled = true;
                         this.elems.textPower.visible = true;
                     }
-                    if (players.reduce((occ, cur) => (cur.connected && !!cur.faceUp ? occ : false), true)) {
+                    if (players.reduce((occ, cur) => (cur.connected ? (cur.faceUp !== null ? occ : false) : (occ)), true)) {
                         this.elems.buttonCall.inputEnabled = true;
                         this.elems.buttonCall.visible = true;
                         this.elems.textCall.inputEnabled = true;
@@ -479,34 +479,34 @@ SceneGame.prototype.displayGameData = function() {
                     this.elems.buttonPick.inputEnabled = true;
                     this.elems.buttonPick.visible = true;
                     this.elems.textPick.visible = true;
-                    if (players.reduce((occ, cur) => (!!cur.connected && !!cur.faceUp ? occ : false), true)) {
+                    if (players.reduce((occ, cur) => (cur.connected ? (cur.faceUp !== null ? occ : false) : (occ)), true)) {
                         this.elems.buttonCall.inputEnabled = true;
                         this.elems.buttonCall.visible = true;
                         this.elems.textCall.visible = true;
                     }
                 });
-                // potentiellement animation en lien avec
                 break;
             case "pick":
                 const card = lastEvent.data.card;
-                dialog = "Tu as pioché un" + (card.value == 12 ? "e " : " ");
+                dialog = "Tu as pioché un" + (card.value === 12 ? "e " : " ");
                 dialog += getNameOfCard(card.value);
                 dialog += " de " + colors_name[card.color] + " !";
                 printDialog(dialog, this);
                 this.elems.mainCardObj.animate(this, card, lastEvent.data.player, () => {
-                    // for (const drink of lastEvent.data.drinks) {} drink -> {player: 0, drink: 2}
                     const drinks = lastEvent.data.drink;
                     // IF CARDS
                     dialog = "";
                     if (card.value >= 1 && card.value <= 3) {
-                        if (drinks.length == 0)
+                        if (drinks.length === 0)
                             dialog = "Tu es immunisé pour ce tour !";
                         else
                             dialog = "Tu dois prendre " + drinks[0].drink + " gorgée" + (drinks[0].drink > 1 ? "s !" : " !");
                     }
                     if (card.value >= 4 && card.value <= 6) {
-                        if (drinks.length == 0)
+                        if (drinks.length === 0)
                             dialog = "L'immunité... personne ne boit.";
+                        else if (drinks[0].player === myPlayerNb)
+                            dialog = "Tu dois prendre " + drinks[0].drink + " gorgée" + (drinks[0].drink > 1 ? "s !" : " !");
                         else
                             dialog = players[drinks[0].player].username + " doit prendre " + drinks[0].drink + " gorgée" + (drinks[0].drink > 1 ? "s !" : " !");
                     }
@@ -552,7 +552,6 @@ SceneGame.prototype.displayGameData = function() {
                 break;
             case "sendPower":
                 printDialog(players[lastEvent.data.player].username + " a utilisé son pouvoir.", this);
-                // potentielement animation en lien avec
                 switch (players[lastEvent.data.player].race) {
                     case "nain":
                         if (players[myPlayerNb].race === "nain") {
@@ -590,7 +589,6 @@ SceneGame.prototype.displayGameData = function() {
                 dialog += " de " + colors_name[card.color] + " !";
                 printDialog(dialog, this);
                 this.elems.mainCardObj.animate(this, card, lastEvent.data.player, () => {
-                    // for (const drink of lastEvent.data.drinks) {} drink -> {player: 0, drink: 2}
                     const drinks = lastEvent.data.drink;
                     // IF CARDS
                     dialog = "";
@@ -601,14 +599,12 @@ SceneGame.prototype.displayGameData = function() {
                             dialog = players[lastEvent.data.player].username + " prend " + drinks[0].drink + " gorgée" + (drinks[0].drink > 1 ? "s !" : " !");
                     }
                     if (card.value >= 4 && card.value <= 6) {
-                        if (drinks.length == 0)
-                            dialog = "L'immunité... personne ne boit !";
-                        else {
-                            if (drinks[0].player == myPlayerNb)
-                                dialog = "Tu dois prendre " + drinks[0].drink + " gorgée" + (drinks[0].drink > 1 ? "s !" : " !");
-                            else
-                                dialog = players[lastEvent.data.player].username + " doit prendre " + drinks[0].drink + " gorgée" + (drinks[0].drink > 1 ? "s !" : " !");
-                        }
+                        if (drinks.length === 0)
+                            dialog = "L'immunité... personne ne boit.";
+                        else if (drinks[0].player === myPlayerNb)
+                            dialog = "Tu dois prendre " + drinks[0].drink + " gorgée" + (drinks[0].drink > 1 ? "s !" : " !");
+                        else
+                            dialog = players[drinks[0].player].username + " doit prendre " + drinks[0].drink + " gorgée" + (drinks[0].drink > 1 ? "s !" : " !");
                     }
                     if (card.value >= 7 && card.value <= 8) {
                         dialog = players[lastEvent.data.player].username + " est vulnérable, ses prochains gorgées\nseront doublées !";
@@ -631,7 +627,6 @@ SceneGame.prototype.displayGameData = function() {
                 break;
             case "callChtulu":
                 printDialog(players[lastEvent.data.player].username + " tente d'appeller le Kraken...", this);
-                // Potentielement animation kraken en meme temps
                 this.elems.mainCardObj.animateKraken(this, lastEvent.data.card, lastEvent.data.player, () => {
                     let dialog = "";
                     if (lastEvent.data.total >= lastEvent.data.need) {
