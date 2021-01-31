@@ -50,6 +50,7 @@ SceneLogin.prototype.create = function() {
     loginButton.type = "button";
     loginContainer.appendChild(loginButton);
     loginButton.onclick = () => {
+        window.dispatchEvent(new Event('soundButton'));
         if (loginInput.value.length === 0) return;
         this.elems.errorMessage.setText("");
         this.game.global.gameClient = new GameClient(
