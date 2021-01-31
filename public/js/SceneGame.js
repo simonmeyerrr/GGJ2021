@@ -302,6 +302,8 @@ SceneGame.prototype.preload = function() {
     this.load.spritesheet("skin", "public/image/avatars.png", 500, 500);
     this.load.spritesheet("background", "public/image/background.png", {frameWidth: 1920, frameHeight: 1080});
     this.load.spritesheet("cut", "public/image/barre.png", {frameWidth: 202, frameHeight: 440});
+    this.load.spritesheet("shield", "public/image/shield.png", {frameWidth: 454, frameHeight: 550});
+    this.load.spritesheet("multiplier", "public/image/multiplier.png", {frameWidth: 360, frameHeight: 360});
     this.load.spritesheet("perroquet", "public/image/3_perroques.png", 239, 196);
     this.load.spritesheet("bulle", "public/image/bulle_game.png", 1920, 350);
     this.load.spritesheet('button', 'public/image/button_sprite_sheet.png', 193, 71);
@@ -330,11 +332,14 @@ SceneGame.prototype.displayPlayerData = function() {
                     this.elems.skins[i].frame = index;
                 }
             }
+            this.elems.multipliers[i].visible = players[i].doubleDrink;
+            this.elems.shields[i].visible = players[i].drinkCanceled;
             this.elems.skins[i].visible = true;
             this.elems.cards[i].visible = true;
             this.elems.texts[i].visible = true;
             this.elems.texts[i].setText(players[i].username);
             this.elems.texts[i].fill = '#ffa900'
+            console.log(players[i]);
         } else if (players[i].connected) {
             if (!players[i].faceUp) {
                 this.elems.cards[i].frame = 52;
@@ -350,6 +355,8 @@ SceneGame.prototype.displayPlayerData = function() {
                     this.elems.skins[i].frame = index;
                 }
             }
+            this.elems.multipliers[i].visible = players[i].doubleDrink;
+            this.elems.shields[i].visible = players[i].drinkCanceled;
             this.elems.skins[i].visible = true;
             this.elems.cards[i].visible = true;
             this.elems.texts[i].visible = true;
@@ -520,6 +527,8 @@ SceneGame.prototype.create = function() {
         texts: [],
         cards: [],
         skins: [],
+        shields: [],
+        multipliers: [],
         dialog: null
     };
 
@@ -552,9 +561,17 @@ SceneGame.prototype.create = function() {
             boundsAlignH: "center"
         }).setTextBounds(posPlayerinfo[i].name.x, posPlayerinfo[i].name.y, 200, posPlayerinfo[i].name.y);
         this.elems.texts.push(text);
+        const shield = this.add.sprite(posPlayerinfo[i].skin.x, posPlayerinfo[i].skin.y, "shield", 0);
+        shield.scale.setTo(0.18, 0.18);
+        this.elems.shields.push(shield);
+        const multiplier = this.add.sprite(posPlayerinfo[i].skin.x, posPlayerinfo[i].skin.y, "multiplier", 0);
+        multiplier.scale.setTo(0.22, 0.22);
+        this.elems.multipliers.push(multiplier);
         skin.visible = false;
         card.visible = false;
         text.visible = false;
+        shield.visible = false;
+        multiplier.visible = false;
     }
 
     this.elems = {...this.elems,
