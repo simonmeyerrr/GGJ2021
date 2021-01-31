@@ -106,7 +106,9 @@ class Game {
     }
 
     sendPower(obj) {
+        console.log(obj);
         obj = obj.filter(el => el.drink !== 0);
+        console.log(obj);
         const play = this.playing;
 
         this.sendPlayerData();
@@ -165,7 +167,7 @@ class Game {
             } else if (msg.type === "sendPower") {
                 if (this.players[pos].drank >= 10) {
                     this.players[pos].drank = 0;
-                    const obj = eventGame.eventRace(this, pos, msg.data);
+                    const obj = eventGame.eventRace(this, pos);
                     return (this.sendPower(obj));
                 }
                 return ws.sendError("Tu n'as pas assez d'energie", false);
@@ -175,6 +177,11 @@ class Game {
             } else if (msg.type === "callChtulu") {
                 let total = eventGame.callChtulu(this, pos);
                 let need = eventGame.getNeed(this);
+                for (let i = 0; i < this.players.length; i++) {
+                    if (this.players[i].faceUp)
+                        this.nextDeck.push(this.players[i].faceUp);
+                    this.players[i].faceUp = null;
+                }
                 return this.sendPickChtulu(total, need);
             } else if (msg.type === "endTurn") {
                 eventGame.endTurn(this);

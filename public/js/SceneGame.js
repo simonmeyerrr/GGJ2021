@@ -428,10 +428,10 @@ SceneGame.prototype.displayGameData = function() {
                         console.log("Tout le monde boit 2 gorgées sauf toi."); // TODO afficher perroquet
                         break;
                     case "orc":
-                        if (lastEvent.data.target === myPlayerNb) {
+                        if (lastEvent.data.drink[0].player === myPlayerNb) {
                             console.log("Le hasard s'est retourné contre toi, bois 10 gorgées !"); // TODO afficher perroquet
                         } else {
-                            console.log("Le hasard a tranché, " + players[lastEvent.data.target].username + " bois 10 gorgées !"); // TODO afficher perroquet
+                            console.log("Le hasard a tranché, " + players[lastEvent.data.drink[0].player].username + " bois 10 gorgées !"); // TODO afficher perroquet
                         }
                         break;
                     case "siren":
@@ -536,10 +536,10 @@ SceneGame.prototype.displayGameData = function() {
                         console.log("Tout le monde boit 2 gorgées sauf " + players[lastEvent.data.player].username + "."); // TODO afficher perroquet
                         break;
                     case "orc":
-                        if (lastEvent.data.target === myPlayerNb) {
+                        if (lastEvent.data.drink[0].player === myPlayerNb) {
                             console.log("Le hasard a eu raison de toi, bois 10 gorgées !"); // TODO afficher perroquet
                         } else {
-                            console.log("Le hasard a tranché, " + players[lastEvent.data.target].username + " bois 10 gorgées !"); // TODO afficher perroquet
+                            console.log("Le hasard a tranché, " + players[lastEvent.data.drink[0].player].username + " bois 10 gorgées !"); // TODO afficher perroquet
                         }
                         break;
                     case "siren":

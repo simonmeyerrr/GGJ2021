@@ -1,4 +1,4 @@
-const cardFct = require('./cards')
+const cardFct = require('./cards');
 
 function deckIsEmpty(gameState) {
     if (gameState.deck.length === 0) {
@@ -56,8 +56,10 @@ function card13(gameState, pos, obj) {
 function card46(gameState, pos, obj) {
     let index = Math.floor(Math.random() * gameState.players.length);
 
-    while (index === pos || !gameState.players[index].ws) {
+    let connected = gameState.players.reduce((occ, cur) => occ + (!cur.ws ? 0 : 1), 0);
+    while (!gameState.players[index].ws && connected > 0) {
         index = Math.floor(Math.random() * gameState.players.length);
+        connected = gameState.players.reduce((occ, cur) => occ + (!cur.ws ? 0 : 1), 0);
     }
     if (gameState.players[index].drinkCanceled === true) {
         gameState.players[index].drinkCanceled = false;
@@ -70,7 +72,7 @@ function card46(gameState, pos, obj) {
         return (obj);
     } else {
         obj[index].drink += gameState.players[pos].faceUp.value;
-        gameState.players[index].drank += gameState.players[pos].faceUp.value
+        gameState.players[index].drank += gameState.players[pos].faceUp.value;
         return (obj);
     }
 }
@@ -83,8 +85,6 @@ function card1113(gameState, pos, obj) {
                 gameState.players[i].drank += 2;
                 gameState.players[i].doubleDrink = false;
             } else if (gameState.players[i].drinkCanceled === true) {
-                obj[i].drink += 0;
-                gameState.players[i].drank += 0;
                 gameState.players[i].drinkCanceled = false;
             } else {
                 obj[i].drink += 1;
@@ -107,7 +107,9 @@ function eventCard(gameState, pos) {
         obj = card46(gameState, pos, obj);
     } else if (gameState.players[pos].faceUp.value > 6 && gameState.players[pos].faceUp.value <= 8) {
         gameState.players[pos].doubleDrink = true;
+        gameState.players[pos].drinkCanceled = false;
     } else if (gameState.players[pos].faceUp.value > 8 && gameState.players[pos].faceUp.value <= 10) {
+        gameState.players[pos].doubleDrink = false;
         gameState.players[pos].drinkCanceled = true;
     } else if (gameState.players[pos].faceUp.value > 10 && gameState.players[pos].faceUp.value <= 13) {
        obj = card1113(gameState, pos, obj);
@@ -115,10 +117,11 @@ function eventCard(gameState, pos) {
     return (obj);
 }
 
-function eventRace(gameState, pos, ev) {
+function eventRace(gameState, pos) {
     let obj = gameState.players.map((player, key) => ({
         player: key, drink: 0,
     }));
+    const ev = gameState.players[pos].race;
     if (ev === "siren") {
         obj = siren(gameState, pos, obj);
     } else if (ev === "orc") {
@@ -157,13 +160,17 @@ function callChtulu(gameState, pos) {
             total += gameState.players[i].faceUp.value;
     }
     deckIsEmpty(gameState);
-    pickCard(gameState, pos);
-    total += gameState.picked.value
+    if (gameState.players[pos].faceUp)
+        gameState.nextDeck.push(gameState.players[pos].faceUp);
+    gameState.players[pos].faceUp = gameState.deck.shift();
+    gameState.hasPicked = true;
+    gameState.picked = gameState.players[pos].faceUp;
+    total += gameState.picked.value;
     return (total);
 }
 
 function getNeed(gameState) {
-    let needed = gameState.players.length;
+    let needed = gameState.players.length + 1;
 
     for (let i = 0; i < gameState.players.length; i++) {
         if (!gameState.players[i].ws)
@@ -173,11 +180,10 @@ function getNeed(gameState) {
 }
 
 function nain(gameState, pos, obj) {
-    if (gameState.players[pos].race == "nain") {
+    if (gameState.players[pos].race === "nain") {
         for (let i = 0; i < gameState.players.length; i++) {
-            if (gameState.players[i].ws && gameState.players[i].race == "nain") {
-                obj[i].drink += 5;
-                gameState.players[i].drank += 5;
+            if (gameState.players[i].ws && gameState.players[i].race === "nain") {
+                obj[i].drink = 5;
             }
         }
     }
@@ -185,18 +191,18 @@ function nain(gameState, pos, obj) {
 }
 
 function siren(gameState, pos, obj) {
-    if (gameState.players[pos].race == "siren") {
+    if (gameState.players[pos].race === "siren") {
         gameState.players[pos].drinkCanceled = true;
+        gameState.players[pos].doubleDrink = false;
     }
     return (obj);
 }
 
 function gobelin(gameState, pos, obj) {
-    if (gameState.players[pos].race == "gobelin") {
+    if (gameState.players[pos].race === "gobelin") {
         for (let i = 0; i < gameState.players.length; i++) {
-            if (i != pos && gameState.players[i].ws) {
-                obj[i].drink += 2;
-                gameState.players[i].drank += 2;
+            if (i !== pos && gameState.players[i].ws) {
+                obj[i].drink = 2;
             }
         }
     }
@@ -206,28 +212,32 @@ function gobelin(gameState, pos, obj) {
 function orc(gameState, pos, obj) {
     let index = Math.floor(Math.random() * gameState.players.length);
 
-    if (gameState.players[pos].race == "orc") {
-        while (index == pos || !gameState.players[index].ws) {
+    console.log(pos, gameState.players[pos]);
+    if (gameState.players[pos].race === "orc") {
+        let connected = gameState.players.reduce((occ, cur) => occ + (!cur.ws ? 0 : 1), 0);
+        console.log("connected", connected);
+        while (!gameState.players[index].ws && connected > 0) {
             index = Math.floor(Math.random() * gameState.players.length);
+            connected = gameState.players.reduce((occ, cur) => occ + (!cur.ws ? 0 : 1), 0);
         }
-        obj[index].drink += 10;
-        gameState.players[index].drank += 10;
+        obj[index].drink = 10;
     }
     return (obj);
 }
 
 function mage(gameState, pos, obj) {
-    if (gameState.players[pos].race == "mage") {
+    if (gameState.players[pos].race === "mage") {
         gameState.players[pos].doubleDrink = false;
     }
     return (obj);
 }
 
 function elf(gameState, pos, obj) {
-    if (gameState.players[pos].race == "elf") {
+    if (gameState.players[pos].race === "elf") {
         for (let i = 0; i < gameState.players.length; i++) {
-            if (i != pos && gameState.players[i].ws) {
+            if (i !== pos && gameState.players[i].ws) {
                 gameState.players[i].doubleDrink = true;
+                gameState.players[i].drinkCanceled = false;
             }
         }
     }
@@ -237,9 +247,8 @@ function elf(gameState, pos, obj) {
 module.exports = {
     endTurn,
     setRace,
-    raceSelectedAll,
     pickCard,
     callChtulu,
     getNeed,
     eventRace
-}
+};
