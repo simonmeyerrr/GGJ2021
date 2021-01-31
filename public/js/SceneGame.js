@@ -313,6 +313,15 @@ const Card = class {
         this.flipCard(frame, game, posPlayerinfo[player].card.x, posPlayerinfo[player].card.y, posPlayerinfo[player].card.rotation, cb);
         this.moveTo(game.game.world.width / 2 -  120, game.game.world.height / 2 - 300, game);
     }
+    animateKraken(game, card, player, cb) {
+        let frame = 0;
+        frame += card.value - 1;
+        frame += 13 * (card.color === 'C' ? 0 : card.color === 'D' ? 1 : card.color === 'H' ? 2 : 3);
+        this.reset();
+
+        this.flipCard(frame, game, posPlayerinfo[player].card.x, posPlayerinfo[player].card.y, posPlayerinfo[player].card.rotation, cb);
+        this.moveTo(game.game.world.width / 2 -  120, game.game.world.height / 2 - 300, game);
+    }
 };
 
 const SceneGame = function() {};
@@ -323,7 +332,7 @@ SceneGame.prototype.preload = function() {
     // Load assets
     this.load.spritesheet("card", "public/image/cards.png", 81, 117);
     this.load.spritesheet("skin", "public/image/avatars.png", 500, 500);
-    this.load.spritesheet("beer", "public/image/beer.png", 100, 100);
+    this.load.spritesheet("beer", "public/image/beer.png", 143, 180);
     this.load.spritesheet("background", "public/image/background.png", {frameWidth: 1920, frameHeight: 1080});
     this.load.spritesheet("mage", "public/image/mage.png", {frameWidth: 1920, frameHeight: 1080});
     this.load.spritesheet("table", "public/image/table.png", {frameWidth: 1920, frameHeight: 1080});
@@ -346,28 +355,7 @@ SceneGame.prototype.displayPlayerData = function() {
     this.elems.beer.frame = players[global.gameClient.myPlayerNb].drank > 10 ? 10 : players[ global.gameClient.myPlayerNb].drank;
 
     for (let i = 0; i < players.length; i++) {
-        if (i === global.gameClient.myPlayerNb) {
-            if (!players[i].faceUp) {
-                this.elems.cards[i].frame = 52;
-            } else {
-                let frame = 0;
-                frame += players[i].faceUp.value - 1;
-                frame += 13 * (players[i].faceUp.color === 'C' ? 0 : players[i].faceUp.color === 'D' ? 1 : players[i].faceUp.color === 'H' ? 2 : 3)
-                this.elems.cards[i].frame = frame
-            }
-            for (let index = 0; index < skinsOrder.length; ++index) {
-                if (skinsOrder[index] === players[i].race) {
-                    this.elems.skins[i].frame = index;
-                }
-            }
-            this.elems.shields[i].visible = players[i].drinkCanceled;
-            this.elems.skins[i].visible = true;
-            this.elems.cards[i].visible = true;
-            this.elems.texts[i].visible = true;
-            this.elems.texts[i].setText(players[i].username);
-            this.elems.texts[i].fill = '#ffa900'
-            console.log(players[i]);
-        } else if (players[i].connected) {
+        if (players[i].connected) {
             if (!players[i].faceUp) {
                 this.elems.cards[i].frame = 52;
             } else {
@@ -377,6 +365,8 @@ SceneGame.prototype.displayPlayerData = function() {
                 this.elems.cards[i].frame = frame
             }
             this.elems.texts[i].setText(players[i].username);
+            if (i === global.gameClient.myPlayerNb)
+                this.elems.texts[i].fill = '#ffa900';
             for (let index = 0; index < skinsOrder.length; ++index) {
                 if (skinsOrder[index] === players[i].race) {
                     this.elems.skins[i].frame = index;
@@ -772,7 +762,7 @@ SceneGame.prototype.create = function() {
             font: "65px ManicSea", fill: "#ff0000",
             boundsAlignH: "center", boundsAlignV: "middle",
         }).setTextBounds(0, 600, 1980, 600),
-        beer: this.add.sprite(1800, 550, "beer", 0),
+        beer: this.add.sprite(1800, 500, "beer", 0),
 
     };
     for (let i = 0; i < 10; ++i) {
@@ -780,7 +770,7 @@ SceneGame.prototype.create = function() {
         this.elems.shields[i].bringToTop();
         this.elems.multipliers[i].bringToTop();
     }
-    this.elems.beer.scale.setTo(1.3, 1.3);
+    // this.elems.beer.scale.setTo(1.3, 1.);
     this.hideAllActions();
 
     this.elems.mainCardObj = new Card(this.elems.mainCard);
