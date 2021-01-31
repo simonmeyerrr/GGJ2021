@@ -459,10 +459,10 @@ SceneGame.prototype.displayGameData = function() {
                         dialog = "Tout le monde boit 2 gorgées sauf toi.";
                         break;
                     case "orc":
-                        if (lastEvent.data.target === myPlayerNb) {
+                        if (lastEvent.data.drink[0].player === myPlayerNb) {
                             dialog = "Le hasard s'est retourné contre toi,\nbois 10 gorgées !";
                         } else {
-                            dialog = "Le hasard a tranché, " + players[lastEvent.data.target].username + " bois 10 gorgées !";
+                            dialog = "Le hasard a tranché, " + players[lastEvent.data.drink[0].player].username + " bois 10 gorgées !";
                         }
                         break;
                     case "siren":
@@ -565,10 +565,10 @@ SceneGame.prototype.displayGameData = function() {
                         dialog = "Tout le monde boit 2 gorgées sauf " + players[lastEvent.data.player].username + ".";
                         break;
                     case "orc":
-                        if (lastEvent.data.target === myPlayerNb) {
+                        if (lastEvent.data.drink[0].player === myPlayerNb) {
                             dialog = "Le hasard a eu raison de toi, bois 10 gorgées !";
                         } else {
-                            dialog = "Le hasard a tranché, " + players[lastEvent.data.target].username + " bois 10 gorgées !";
+                            dialog = "Le hasard a tranché, " + players[lastEvent.data.drink[0].player].username + " bois 10 gorgées !";
                         }
                         break;
                     case "siren":
