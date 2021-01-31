@@ -42,7 +42,6 @@ SceneLobby.prototype.preload = function() {
 
 const actionStart = function() {
     this.game.global.gameClient.start();
-    this.state.start("SceneGame");
 };
 
 const actionInvite = function() {
@@ -99,18 +98,10 @@ SceneLobby.prototype.prevAvatar = function() {
 };
 
 SceneLobby.prototype.create = function() {
-    console.log("Create Scene Lobby");
     const global = this.game.global;
-
-    const user = this.game.global.gameClient.players[this.game.global.gameClient.myPlayerNb];
-    console.log(user);
-    console.log(avatar_frame[user.race]);
+    const user = global.gameClient.players[global.gameClient.myPlayerNb];
 
     this.elems = {
-        errorMessage: this.add.text(0, 0, "", {
-            font: "65px ManicSea", fill: "#ff0000",
-            boundsAlignH: "center", boundsAlignV: "middle",
-        }).setTextBounds(0, 600, 1980, 600),
         background: this.add.sprite(0, 0, "background", 0),
         buttonNext: this.add.button(this.world.centerX - 54 + 300, 250, "buttonRight", this.nextAvatar, this, 2, 1, 0),
         buttonPrev: this.add.button(this.world.centerX - 54 - 300, 250, "buttonLeft", this.prevAvatar, this, 2, 1, 0),
@@ -158,6 +149,10 @@ SceneLobby.prototype.create = function() {
                 boundsAlignH: "center"
             }
         ),
+        errorMessage: this.add.text(0, 0, "", {
+            font: "65px ManicSea", fill: "#ff0000",
+            boundsAlignH: "center", boundsAlignV: "middle",
+        }).setTextBounds(0, 600, 1980, 600),
     };
     this.players = [];
     for (let i = 0; i < 9; ++i) {

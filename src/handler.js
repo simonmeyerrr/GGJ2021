@@ -75,6 +75,28 @@ const createGameInfoHandler = (req, res) => {
     }
 };
 
+setInterval(() => {
+    const now = Date.now();
+    const closeGame = (uuid) => {
+        games[uuid].close();
+        delete games[uuid];
+    };
+    for (const uuid in games) {
+        if (!games[uuid].started) {
+            if (games[uuid].players.length === 0 && games[uuid].created < now - 1000 * 10) {
+                closeGame(uuid);
+            } else if (games[uuid].created < now - 1000 * 120) {
+                closeGame(uuid);
+            }
+        } else if (games[uuid].started) {
+            const connected = games[uuid].players.reduce((prev, player) => {
+                return prev + (!!player.ws ? 1 : 0);
+            }, 0);
+            if (connected <= 1) closeGame(uuid);
+        }
+    }
+}, 5000);
+
 module.exports = {
     gameWsHandler,
     createGameHandler,

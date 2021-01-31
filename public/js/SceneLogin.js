@@ -33,7 +33,6 @@ SceneLogin.prototype.create = function() {
         }).setTextBounds(0, 600, 1980, 600),
     };
 
-
     // Username input
     const loginContainer = document.getElementById("login-container");
     const loginTitle = document.createElement("h1");

@@ -10,6 +10,7 @@ class GameClient {
         this.onPlayerUpdate = null;
         this.onGameUpdate = null;
         this.onError = null;
+        this.onDisconnect = null;
 
         this._initWebsocket();
     }
@@ -48,16 +49,16 @@ class GameClient {
                 '://' + window.location.hostname + ':' + window.location.port + '/api/game/' + this.gameId
         );
         this._ws.onerror = (err) => {
-            console.log("Error occurred", {err});
+            this.error = err.toString();
+            if (this.onError) this.onError(this.error);
             this._ws.close();
             this._ws = null;
         };
         this._ws.onclose = () => {
-            console.log("Connection closed");
             this._ws = null;
+            if (this.onDisconnect) this.onDisconnect();
         };
         this._ws.onopen = () => {
-            console.log("Connection opened");
             this._sendMessage("join", {username: this.username});
         };
         this._ws.onmessage = (msg) => {
@@ -70,7 +71,7 @@ class GameClient {
     }
 
     _manageMessage(msg) {
-        console.log("MESSAGE", msg);
+        console.log("RECEIVED", msg);
         if (msg.type === "players") {
             const old = this.players;
             this.players = msg.data.list;
@@ -83,14 +84,7 @@ class GameClient {
             const old = this.lastEvent;
             this.lastEvent = msg;
             if (this.onGameUpdate) this.onGameUpdate(this.lastEvent, old);
-/*
-            if (msg.type === "endTurn" && msg.data.player === this.myPlayerNb) {
-                this.pick();
-                setTimeout(() => this.endTurn(), 1000);
-            }
-*/
         } else if (msg.type === "error") {
-            console.log("error", msg);
             this.error = msg.data.message;
             if (this.onError) this.onError(this.error);
         } else {
