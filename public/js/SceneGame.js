@@ -772,6 +772,11 @@ SceneGame.prototype.create = function() {
         beer: this.add.sprite(1800, 550, "beer", 0),
 
     };
+    for (let i = 0; i < 10; ++i) {
+        this.elems.skins[i].bringToTop();
+        this.elems.shields[i].bringToTop();
+        this.elems.multipliers[i].bringToTop();
+    }
     this.elems.beer.scale.setTo(1.3, 1.3);
     this.hideAllActions();
 
