@@ -1,3 +1,11 @@
+
+const colors_name = {
+    "C": "Coeur",
+    "H": "Trèfle",
+    "S": "Pique",
+    "D": "Carreau"
+};
+
 const posPlayerinfo = [
     {
         card: {
@@ -175,6 +183,20 @@ const dialogPos = {
     line_length: 40
 }
 
+function getNameOfCard(value) {
+    if (value == 1)
+        return "As";
+    if (value > 1 && value < 11)
+        return value;
+    if (value == 11)
+        return "Valet";
+    if (value == 12)
+        return "Dame";
+    if (value == 13)
+        return "Roi";
+    return "";
+}
+
 function displayNextLetter() {
 
     this.textObject.text = this.message.substr(0, this.counter);
@@ -184,7 +206,7 @@ function displayNextLetter() {
 
 function displayLetterByLetterText(textObject, message, game, onCompleteCallback) {
 
-    let timerEvent = game.time.events.repeat(80, message.length, displayNextLetter,
+    let timerEvent = game.time.events.repeat(40, message.length, displayNextLetter,
         { textObject: textObject, message: message, counter: 1 });
 
     timerEvent.timer.onComplete.addOnce(onCompleteCallback, this);
@@ -367,8 +389,7 @@ SceneGame.prototype.displayGameData = function() {
     if (lastEvent.data.player === myPlayerNb) {
         switch (lastEvent.type) {
             case "endTurn":
-                console.log("C'est à ton tour"); // TODO perroquet dit c
-                printDialog("C'est à ton tour", this);
+                printDialog("C'est à ton tour " + players[lastEvent.data.player].username + " !", this);
                 this.elems.buttonPick.inputEnabled = true;
                 this.elems.buttonPick.visible = true;
                 this.elems.textPick.inputEnabled = true;
@@ -387,8 +408,7 @@ SceneGame.prototype.displayGameData = function() {
                 }
                 break;
             case "sendPower":
-                console.log("Tu as utilisé ton pouvoir."); // TODO perroquet dit ca
-                printDialog("Tu as utilisé ton pouvoir.", this);
+                printDialog("Tu as utilisé ton pouvoir !", this);
                 // potentiellement animation en lien avec
                 console.log("Afficher gages liés au pouvoir"); // TODO mais relou
                 this.elems.buttonPick.inputEnabled = true;
@@ -403,11 +423,40 @@ SceneGame.prototype.displayGameData = function() {
                 }
                 break;
             case "pick":
-                printDialog("Tu as pioché une carte.", this);
-                console.log("Tu as pioché une carte."); // TODO perroquet dit ca
-                this.elems.mainCardObj.animate(this, lastEvent.data.card, lastEvent.data.player, () => {
-                    console.log("afficher qui boit quoi"); // TODO relou
+                const card = lastEvent.data.card;
+                let dialog = "Tu as pioché un" + (card.value == 12 ? "e " : " ");
+                dialog += getNameOfCard(card.value);
+                dialog += " de " + colors_name[card.color] + " !";
+                printDialog(dialog, this);
+                this.elems.mainCardObj.animate(this, card, lastEvent.data.player, () => {
                     // for (const drink of lastEvent.data.drinks) {} drink -> {player: 0, drink: 2}
+                    const drinks = lastEvent.data.drink;
+                    console.log(lastEvent.data.drink);
+                    // IF CARDS
+                    dialog = "";
+                    if (card.value >= 1 && card.value <= 3) {
+                        if (drinks.length == 0)
+                            dialog = "Tu es immunisé pour ce tour !";
+                        else
+                            dialog = "Tu dois prendre " + drinks[0].drink + " gorgée" + (drinks[0].drink > 1 ? "s !" : " !");
+                    }
+                    if (card.value >= 4 && card.value <= 6) {
+                        if (drinks.length == 0)
+                            dialog = "L'immunité... personne ne boit !";
+                        else
+                            dialog = players[drinks[0].drink].username + " doit prendre " + drinks[0].drink + " gorgée" + (drinks[0].drink > 1 ? "s !" : " !");
+                    }
+                    if (card.value >= 7 && card.value <= 8) {
+                        dialog = "Tu es vulnérable, tes prochains gorgées seront doublées...";
+                    }
+                    if (card.value >= 9 && card.value <= 10) {
+                        dialog = "Parfait ! Tu es immunisé pour le prochain tour !";
+                    }
+                    if (card.value >= 11 && card.value <= 13) {
+                        dialog = "TODO";
+                    }
+                    printDialog(dialog, this);
+                    //
                     this.elems.buttonEnd.inputEnabled = true;
                     this.elems.buttonEnd.visible = true;
                     this.elems.textEnd.inputEnabled = true;
@@ -415,8 +464,8 @@ SceneGame.prototype.displayGameData = function() {
                 });
                 break;
             case "callChtulu":
-                printDialog("Tu as appellé le Kraken.", this);
-                console.log("Tu as appellé le Kraken."); // TODO perroquet dit ca
+                printDialog("Tu tentes d'appeler le Kraken !", this);
+                console.log("Tu as appelé le Kraken."); // TODO perroquet dit ca
                 // Potentielement animation kraken en meme temps
                 this.elems.mainCardObj.animate(this, lastEvent.data.card, lastEvent.data.player, () => {
                     console.log("afficher qui boit quoi"); // TODO relou
@@ -432,18 +481,17 @@ SceneGame.prototype.displayGameData = function() {
         this.hideAllActions();
         switch (lastEvent.type) {
             case "endTurn":
-                printDialog("C'est au tour de " + players[lastEvent.data.player].username, this);
-                console.log("C'est au tour de " + players[lastEvent.data.player].username); // TODO perroquet dit ca
+                printDialog("C'est au tour de " + players[lastEvent.data.player].username + " !", this);
                 break;
             case "sendPower":
-                printDialog(players[lastEvent.data.player].username + " a utilisé son pouvoir.", this);
-                console.log(players[lastEvent.data.player].username + " a utilisé son pouvoir."); // TODO perroquet dit ca
-                // potentielement animation en lien avec
+                printDialog(players[lastEvent.data.player].username + " a utilisé son pouvoir !", this);
                 console.log("Afficher gages liés au pouvoir"); // TODO mais relou
                 break;
             case "pick":
-                printDialog(players[lastEvent.data.player].username + " a pioché une carte.", this);
-                console.log(players[lastEvent.data.player].username + " a pioché une carte."); // TODO perroquet dit ca
+                let dialog = players[lastEvent.data.player].username + " a pioché un" + (lastEvent.data.card.value == 12 ? "e " : " ");
+                dialog += getNameOfCard(lastEvent.data.card.value);
+                dialog += " de " + colors_name[lastEvent.data.card.color] + " !";
+                printDialog(dialog, this);
                 this.elems.mainCardObj.animate(this, lastEvent.data.card, lastEvent.data.player, () => {
                     console.log("afficher qui boit quoi"); // TODO relou
                     // for (const drink of lastEvent.data.drinks) {} drink -> {player: 0, drink: 2}
@@ -561,7 +609,7 @@ SceneGame.prototype.create = function() {
         mainCard: this.add.sprite(drawDeck.x, drawDeck.y, "card", 52),
         buttonPower: this.add.button(1762, 350, 'ability', actionSendPower, this, 2, 1, 0),
         textPower: this.add.text(
-            1330, 375, "Activer sa capacité",
+            1330, 375, "Activer ta capacité",
             {
                 font: "50px ManicSea",
                 fill: "white",
@@ -591,7 +639,7 @@ SceneGame.prototype.create = function() {
         ),
         buttonEnd: this.add.button(50, 350, 'finish', actionEndTurn, this, 2, 1, 0),
         textEnd: this.add.text(
-            175, 375, "Terminer son tour",
+            175, 375, "Terminer ton tour",
             {
                 font: "50px ManicSea",
                 fill: "white",
