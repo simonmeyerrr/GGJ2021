@@ -2,7 +2,7 @@ const posPlayerinfo = [
     {
         card: {
             x: 345,
-            y: 675,
+            y: 685,
             rotation: 0.27
         },
         name: {
@@ -11,7 +11,7 @@ const posPlayerinfo = [
         },
         skin: {
             x: 100,
-            y: 850
+            y: 875
         }
     },
     {
@@ -26,14 +26,14 @@ const posPlayerinfo = [
         },
         skin: {
             x: 275,
-            y: 850
+            y: 875
         }
     },
     {
         card: {
             x: 615,
-            y: 750,
-            rotation: 0.08
+            y: 755,
+            rotation: 0.1
         },
         name: {
             x: 450,
@@ -41,14 +41,14 @@ const posPlayerinfo = [
         },
         skin: {
             x: 450,
-            y: 850
+            y: 875
         }
     },
     {
         card: {
             x: 750,
-            y: 775,
-            rotation: 0.0
+            y: 770,
+            rotation: 0.05
         },
         name: {
             x: 625,
@@ -56,13 +56,13 @@ const posPlayerinfo = [
         },
         skin: {
             x: 625,
-            y: 850
+            y: 875
         }
     },
     {
         card: {
             x: 885,
-            y: 775,
+            y: 780,
             rotation: 0.0
         },
         name: {
@@ -71,13 +71,13 @@ const posPlayerinfo = [
         },
         skin: {
             x: 800,
-            y: 850
+            y: 875
         }
     },
     {
         card: {
             x: 1020,
-            y: 775,
+            y: 780,
             rotation: 0.0
         },
         name: {
@@ -86,14 +86,14 @@ const posPlayerinfo = [
         },
         skin: {
             x: 975,
-            y: 850
+            y: 875
         }
     },
     {
         card: {
             x: 1155,
             y: 775,
-            rotation: 0.0
+            rotation: -0.05
         },
         name: {
             x: 1150,
@@ -101,14 +101,14 @@ const posPlayerinfo = [
         },
         skin: {
             x: 1150,
-            y: 850
+            y: 875
         }
     },
     {
         card: {
             x: 1290,
-            y: 750,
-            rotation: -0.08
+            y: 760,
+            rotation: -0.1
         },
         name: {
             x: 1325,
@@ -116,13 +116,13 @@ const posPlayerinfo = [
         },
         skin: {
             x: 1325,
-            y: 850
+            y: 875
         }
     },
     {
         card: {
             x: 1425,
-            y: 725,
+            y: 735,
             rotation: -0.2
         },
         name: {
@@ -131,7 +131,7 @@ const posPlayerinfo = [
         },
         skin: {
             x: 1500,
-            y: 850
+            y: 875
         }
     },
     {
@@ -146,7 +146,7 @@ const posPlayerinfo = [
         },
         skin: {
             x: 1675,
-            y: 850
+            y: 875
         }
     },
 ]
@@ -270,7 +270,11 @@ SceneGame.prototype.preload = function() {
     this.load.spritesheet("card", "public/image/cards.png", 81, 117);
     this.load.spritesheet("skin", "public/image/avatars.png", 500, 500);
     this.load.spritesheet("background", "public/image/background.png", {frameWidth: 1920, frameHeight: 1080});
+    this.load.spritesheet("cut", "public/image/barre.png", {frameWidth: 202, frameHeight: 440});
+    this.load.spritesheet("perroquet", "public/image/3_perroques.png", 239, 196);
+    this.load.spritesheet("bulle", "public/image/bulle_game.png", 1920, 350);
     this.load.spritesheet('button', 'public/image/button_sprite_sheet.png', 193, 71);
+
 };
 
 SceneGame.prototype.displayPlayerData = function() {
@@ -295,6 +299,7 @@ SceneGame.prototype.displayPlayerData = function() {
             this.elems.cards[i].visible = true;
             this.elems.texts[i].visible = true;
             this.elems.texts[i].setText(players[i].username);
+            this.elems.texts[i].fill = '#ffa900'
         } else if (players[i].connected) {
             if (!players[i].faceUp) {
                 this.elems.cards[i].frame = 52;
@@ -452,16 +457,25 @@ SceneGame.prototype.create = function() {
         skins: [],
     };
 
+    this.bulle = this.add.sprite(0, 0, "bulle", 0);
+    this.bulle.animations.add("talk");
+    this.bulle.animations.play("talk", 10, true);
+    this.add.sprite(36, 38, "cut");
+    this.perroquet = this.add.sprite(45, 38, "perroquet");
+    this.perroquet.animations.add("breathe", [0, 1]);
+    this.perroquet.animations.play("breathe", 2, true);
+
+
     for (let i = 0; i < 10; ++i) {
-        const skin = this.add.sprite(posPlayerinfo[i].skin.x, posPlayerinfo[i].skin.y, "skin", 0);
-        skin.scale.setTo(0.40, 0.40);
-        this.elems.skins.push(skin);
         const card = this.add.sprite(posPlayerinfo[i].card.x, posPlayerinfo[i].card.y, "card", 52);
         card.rotation = posPlayerinfo[i].card.rotation;
         this.elems.cards.push(card);
+        const skin = this.add.sprite(posPlayerinfo[i].skin.x, posPlayerinfo[i].skin.y, "skin", 0);
+        skin.scale.setTo(0.35, 0.35);
+        this.elems.skins.push(skin);
         const text = this.add.text(0, 0, "", {
             font: "40px ManicSea",
-            fill: "#0e0b0b",
+            fill: "#ffffff",
             textAlign: "center",
             boundsAlignH: "center"
         }).setTextBounds(posPlayerinfo[i].name.x, posPlayerinfo[i].name.y, 200, posPlayerinfo[i].name.y);
