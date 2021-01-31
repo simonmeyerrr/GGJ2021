@@ -300,8 +300,11 @@ SceneGame.prototype.preload = function() {
     // Load assets
     this.load.spritesheet("card", "public/image/cards.png", 81, 117);
     this.load.spritesheet("skin", "public/image/avatars.png", 500, 500);
+    this.load.spritesheet("beer", "public/image/beer.png", 100, 100);
     this.load.spritesheet("background", "public/image/background.png", {frameWidth: 1920, frameHeight: 1080});
-    this.load.spritesheet("cut", "public/image/barre.png", {frameWidth: 202, frameHeight: 440});
+    this.load.spritesheet("mage", "public/image/mage.png", {frameWidth: 1920, frameHeight: 1080});
+    this.load.spritesheet("table", "public/image/table.png", {frameWidth: 1920, frameHeight: 1080});
+    this.load.spritesheet("cut", "public/image/barre.png", {frameWidth: 1920, frameHeight: 1080});
     this.load.spritesheet("shield", "public/image/shield.png", {frameWidth: 454, frameHeight: 550});
     this.load.spritesheet("multiplier", "public/image/multiplier.png", {frameWidth: 360, frameHeight: 360});
     this.load.spritesheet("perroquet", "public/image/3_perroques.png", 239, 196);
@@ -317,6 +320,8 @@ SceneGame.prototype.preload = function() {
 SceneGame.prototype.displayPlayerData = function() {
     const global = this.game.global;
     const players = global.gameClient.players;
+    this.elems.beer.frame = players[global.gameClient.myPlayerNb].drank > 10 ? 10 : players[ global.gameClient.myPlayerNb].drank;
+
     for (let i = 0; i < players.length; i++) {
         if (i === global.gameClient.myPlayerNb) {
             if (!players[i].faceUp) {
@@ -332,7 +337,6 @@ SceneGame.prototype.displayPlayerData = function() {
                     this.elems.skins[i].frame = index;
                 }
             }
-            this.elems.multipliers[i].visible = players[i].doubleDrink;
             this.elems.shields[i].visible = players[i].drinkCanceled;
             this.elems.skins[i].visible = true;
             this.elems.cards[i].visible = true;
@@ -571,6 +575,9 @@ SceneGame.prototype.create = function() {
 
     this.elems = {
         background: this.add.sprite(0, 0, "background", 0),
+        cut: this.add.sprite(0, 0, "cut", 0),
+        mage: this.add.sprite(0, 0, "mage", 0),
+        table: this.add.sprite(0, 0, "table", 0),
         returnedCard: this.add.sprite(drawDeck.x, drawDeck.y, "card", 52),
         texts: [],
         cards: [],
@@ -580,11 +587,10 @@ SceneGame.prototype.create = function() {
         dialog: null
     };
 
-    this.bulle = this.add.sprite(0, 0, "bulle", 0);
+    this.bulle = this.add.sprite(10, 0, "bulle", 0);
     this.bulle.animations.add("talk");
     this.bulle.animations.play("talk", 10, true);
-    this.add.sprite(36, 38, "cut");
-    this.perroquet = this.add.sprite(45, 38, "perroquet");
+    this.perroquet = this.add.sprite(52, 38, "perroquet");
     this.perroquet.animations.add("breathe", [0, 1]);
     this.perroquet.animations.play("breathe", 2, true);
 
@@ -668,7 +674,10 @@ SceneGame.prototype.create = function() {
             font: "65px ManicSea", fill: "#ff0000",
             boundsAlignH: "center", boundsAlignV: "middle",
         }).setTextBounds(0, 600, 1980, 600),
+        beer: this.add.sprite(1800, 550, "beer", 0),
+
     };
+    this.elems.beer.scale.setTo(1.3, 1.3);
     this.hideAllActions();
 
     this.elems.mainCardObj = new Card(this.elems.mainCard);
