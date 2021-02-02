@@ -226,10 +226,8 @@ function gobelin(gameState, pos, obj) {
 function orc(gameState, pos, obj) {
     let index = Math.floor(Math.random() * gameState.players.length);
 
-    console.log(pos, gameState.players[pos]);
     if (gameState.players[pos].race === "orc") {
         let connected = gameState.players.reduce((occ, cur) => occ + (!cur.ws ? 0 : 1), 0);
-        console.log("connected", connected);
         while (!gameState.players[index].ws && connected > 0) {
             index = Math.floor(Math.random() * gameState.players.length);
             connected = gameState.players.reduce((occ, cur) => occ + (!cur.ws ? 0 : 1), 0);

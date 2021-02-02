@@ -71,7 +71,6 @@ class GameClient {
     }
 
     _manageMessage(msg) {
-        console.log("RECEIVED", msg);
         if (msg.type === "players") {
             const old = this.players;
             this.players = msg.data.list;

@@ -44,8 +44,6 @@ const avatar_desc = {
 const SceneLobby = function() {};
 
 SceneLobby.prototype.preload = function() {
-    console.log("Preload Scene Lobby");
-    // Load assets
     this.load.spritesheet("background", "public/resources/wpp.jpg", {frameWidth: 1920, frameHeight: 1080});
     this.load.spritesheet('buttonRight', 'public/image/right.png', 108, 116);
     this.load.spritesheet('buttonLeft', 'public/image/left.png', 108, 116);

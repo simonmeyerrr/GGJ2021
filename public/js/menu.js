@@ -28,7 +28,6 @@ $('#btn-create').on('click', function() {
     createGame()
         .then(redirectToGame)
         .catch((err) => {
-            console.log(err);
             $this.button('reset');
             setDisabledAll(false);
         });
@@ -47,15 +46,12 @@ $('#btn-join').on('click', function() {
                 throw "This game does not exists";
         })
         .catch((err) => {
-            console.log(err);
-            // display error;
             $this.button('reset');
             setDisabledAll(false);
         });
 });
 
 $('#input-game-id').on('input', function() {
-    console.log("CHAAAANGE");
     const $this = $(this);
     if ($this.val() === "" && !$('#btn-join').prop("disabled")) {
         $('#btn-join').prop("disabled", true);

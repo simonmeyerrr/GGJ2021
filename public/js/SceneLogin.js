@@ -1,7 +1,6 @@
 const SceneLogin = function() {};
 
 SceneLogin.prototype.preload = function() {
-    console.log("Preload Scene Login");
     const global = this.game.global;
     // Setup scaling
     this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -22,7 +21,6 @@ SceneLogin.prototype.displayError = function(err) {
 };
 
 SceneLogin.prototype.create = function() {
-    console.log("Create Scene Login");
     const global = this.game.global;
 
     this.elems = {

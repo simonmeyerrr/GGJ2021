@@ -9,7 +9,6 @@ const gameWsHandler = (ws, req) => {
     const gameId = req.params.id;
     ws.uuid = uuid.v4();
     ws.username = null;
-    console.log("[+] Connection", {gameId, uuid: ws.uuid});
 
     ws.sendMessage = (type, data) => {
         ws.send(JSON.stringify({type, data}));
@@ -21,7 +20,6 @@ const gameWsHandler = (ws, req) => {
     };
 
     ws.on('message', (msg) => {
-        console.log("[*] Message", {gameId, uuid: ws.uuid, msg});
         msg = JSON.parse(msg);
 
         if (msg.type === "join" && !ws.username) {
@@ -38,12 +36,10 @@ const gameWsHandler = (ws, req) => {
     });
 
     ws.on('error', (err) => {
-        console.log("[!] Error", {gameId, uuid: ws.uuid, err});
         ws.close();
     });
 
     ws.on('close', () => {
-        console.log("[-] Connection", {gameId, uuid: ws.uuid});
         if (ws.username && games.hasOwnProperty(gameId)) games[gameId].removePlayer(ws);
     });
 };

@@ -3,7 +3,6 @@ const cardFct = require('./cards');
 
 class Game {
     constructor(uuid) {
-        console.log("Game created", uuid);
         this.uuid = uuid;
         this.created = Date.now();
         this.started = false;
@@ -16,7 +15,6 @@ class Game {
     }
 
     close() {
-        console.log("Closing game " + this.uuid);
         this.players.forEach((player) => {
             if (player.ws) player.ws.sendError("La partie a été fermée de force par le serveur", true);
             player.ws = null;
@@ -59,7 +57,7 @@ class Game {
             uuid: ws.uuid,
             username: ws.username,
             race: "nain", faceUp: null,
-            drank: 10, drinkCanceled: false, doubleDrink: false
+            drank: 0, drinkCanceled: false, doubleDrink: false
         });
         this.sendPlayerData();
     }
@@ -102,9 +100,7 @@ class Game {
     }
 
     sendPower(obj) {
-        console.log(obj);
         obj = obj.filter(el => el.drink !== 0);
-        console.log(obj);
         const play = this.playing;
 
         this.sendPlayerData();
@@ -140,7 +136,6 @@ class Game {
 
     messageReceived(ws, msg) {
         const pos = this.getPlayerPos(ws);
-        console.log("Player messaged", pos, msg);
 
 
         if (!this.started) {

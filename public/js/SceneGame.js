@@ -364,7 +364,6 @@ const Card = class {
 const SceneGame = function() {};
 
 SceneGame.prototype.preload = function() {
-    console.log("Preload Scene Game");
     const global = this.game.global;
     // Load assets
     this.load.spritesheet("card", "public/image/cards.png", 81, 117);
@@ -745,7 +744,6 @@ SceneGame.prototype.displayError = function() {
 };
 
 SceneGame.prototype.create = function() {
-    console.log("Create Scene Game");
     const global = this.game.global;
 
     this.elems = {
