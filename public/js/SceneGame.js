@@ -484,10 +484,7 @@ SceneGame.prototype.displayGameData = function() {
                         break;
                     case "necro":
                         const usernb = lastEvent.data.drink[0].player;
-                        if (players[usernb].race === "skeleton")
-                            dialog = "Tu as essayé de transformer un squelette en\nsquelette...";
-                        else
-                            dialog = players[usernb].username + " a été transformé en squelette !";
+                        dialog = "Tu tentes de transformer " + players[usernb].username + " en squelette !";
                         break;
                     case "skeleton":
                         dialog = "Tu t'es appliqué une vulnérabilité pour distribuer\n7 gorgées à " + players[lastEvent.data.drink[0].player].username;
@@ -611,15 +608,9 @@ SceneGame.prototype.displayGameData = function() {
                         break;
                     case "necro":
                         if (lastEvent.data.drink[0].player == myPlayerNb) {
-                            if (players[lastEvent.data.drink[0].player].race === "skeleton")
-                                dialog = "Tu es déjà un squelette, ça ne sert à rien...";
-                            else
-                                dialog = "Tu as été trasnformé en squelette !";
+                            dialog = "On tente de te transformer en squelette !";
                         } else {
-                            if (players[lastEvent.data.drink[0].player].race === "skeleton")
-                                dialog = players[lastEvent.data.player].username + " est déjà un squelette !";
-                            else
-                                dialog = players[lastEvent.data.player].username + " s'est transformé en squellete !";
+                            dialog = players[lastEvent.data.player].username + " tente de transformer en squelette " + players[lastEvent.data.drink[0].player].username + " !";
                         }
                         break;
                     case "skeleton":
