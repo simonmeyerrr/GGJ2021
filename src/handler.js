@@ -83,9 +83,9 @@ setInterval(() => {
     };
     for (const uuid in games) {
         if (!games[uuid].started) {
-            if (games[uuid].players.length === 0 && games[uuid].created < now - 1000 * 10) {
+            if (games[uuid].players.length === 0 && games[uuid].created < now - 1000 * 30) {
                 closeGame(uuid);
-            } else if (games[uuid].created < now - 1000 * 120) {
+            } else if (games[uuid].created < now - 1000 * 300) {
                 closeGame(uuid);
             }
         } else if (games[uuid].started) {

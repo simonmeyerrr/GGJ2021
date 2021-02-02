@@ -59,7 +59,7 @@ class Game {
             uuid: ws.uuid,
             username: ws.username,
             race: "nain", faceUp: null,
-            drank: 0, drinkCanceled: false, doubleDrink: false
+            drank: 10, drinkCanceled: false, doubleDrink: false
         });
         this.sendPlayerData();
     }

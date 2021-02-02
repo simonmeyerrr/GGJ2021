@@ -134,6 +134,20 @@ function eventRace(gameState, pos) {
         obj = elf(gameState, pos, obj);
     } else if (ev === "nain") {
         obj = nain(gameState, pos, obj);
+    } else if (ev === "nain") {
+        obj = nain(gameState, pos, obj);
+    } else if (ev === "nain") {
+        obj = nain(gameState, pos, obj);
+    } else if (ev === "king") {
+        obj = king(gameState, pos, obj);
+    } else if (ev === "medusa") {
+        obj = medusa(gameState, pos, obj);
+    } else if (ev === "barman") {
+        obj = barman(gameState, pos, obj);
+    } else if (ev === "necro") {
+        obj = necro(gameState, pos, obj);
+    } else if (ev === "skeleton") {
+        obj = skeleton(gameState, pos, obj);
     }
     return (obj);
 }
@@ -170,7 +184,7 @@ function callChtulu(gameState, pos) {
 }
 
 function getNeed(gameState) {
-    let needed = gameState.players.length + 1;
+    let needed = gameState.players.length;
 
     for (let i = 0; i < gameState.players.length; i++) {
         if (!gameState.players[i].ws)
@@ -227,7 +241,13 @@ function orc(gameState, pos, obj) {
 
 function mage(gameState, pos, obj) {
     if (gameState.players[pos].race === "mage") {
-        gameState.players[pos].doubleDrink = false;
+        for (let i = 0; i < gameState.players.length; i++) {
+            if (i !== pos && gameState.players[i].ws) {
+                if (gameState.players[pos].drinkCanceled) {
+                    gameState.players[pos].drinkCanceled = false;
+                }
+            }
+        }
     }
     return (obj);
 }
@@ -243,6 +263,72 @@ function elf(gameState, pos, obj) {
     }
     return (obj);
 }
+
+function king(gameState, pos, obj) {
+    if (gameState.players[pos].race === "king") {
+        for (let i = 0; i < gameState.players.length; i++) {
+            if (i !== pos && gameState.players[i].ws) {
+                gameState.players[i].drank = 0;
+            }
+        }
+    }
+    return (obj);
+}
+
+function medusa(gameState, pos, obj) {
+    if (gameState.players[pos].race === "medusa") {
+        for (let i = 0; i < gameState.players.length; i++) {
+            if (i !== pos && gameState.players[i].ws) {
+                if (["mage", "elf", "nain", "king", "barman", "necro"].includes(gameState.players[i].race))
+                    obj[i].drink = 4;
+            }
+        }
+    }
+    return (obj);
+}
+
+function barman(gameState, pos, obj) {
+    if (gameState.players[pos].race === "barman") {
+        for (let i = 0; i < gameState.players.length; i++) {
+            if (i !== pos && gameState.players[i].ws) {
+                gameState.players[i].drank = 10;
+            }
+        }
+    }
+    return (obj);
+}
+
+function necro(gameState, pos, obj) {
+    let index = Math.floor(Math.random() * gameState.players.length);
+
+    if (gameState.players[pos].race === "necro") {
+        let connected = gameState.players.reduce((occ, cur) => occ + (!cur.ws ? 0 : 1), 0);
+        while ((!gameState.players[index].ws && connected > 0) || gameState.players[index].race === "necro") {
+            index = Math.floor(Math.random() * gameState.players.length);
+            connected = gameState.players.reduce((occ, cur) => occ + (!cur.ws ? 0 : 1), 0);
+        }
+        gameState.players[index].race = "skeleton";
+        obj[index].drink = 1;
+    }
+    return (obj);
+}
+
+function skeleton(gameState, pos, obj) {
+    let index = Math.floor(Math.random() * gameState.players.length);
+
+    if (gameState.players[pos].race === "skeleton") {
+        let connected = gameState.players.reduce((occ, cur) => occ + (!cur.ws ? 0 : 1), 0);
+        while ((!gameState.players[index].ws && connected > 0) || gameState.players[index].race === "skeleton") {
+            index = Math.floor(Math.random() * gameState.players.length);
+            connected = gameState.players.reduce((occ, cur) => occ + (!cur.ws ? 0 : 1), 0);
+        }
+        obj[index].drink = 7;
+        gameState.players[pos].drinkCanceled = false;
+        gameState.players[pos].doubleDrink = true;
+    }
+    return (obj);
+}
+
 
 module.exports = {
     endTurn,
