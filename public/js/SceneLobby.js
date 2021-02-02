@@ -5,8 +5,13 @@ const avatar_frame = {
     "siren": 2,
     "mage": 3,
     "elf": 4,
-    "nain": 5
-}
+    "nain": 5,
+    "king": 6,
+    "medusa": 7,
+    "barman": 8,
+    "necro": 9,
+    "skeleton": 10
+};
 
 const avatar_name = {
     0: "gobelin",
@@ -15,15 +20,25 @@ const avatar_name = {
     3: "mage",
     4: "elf",
     5: "nain",
-}
+    6: "king",
+    7: "medusa",
+    8: "barman",
+    9: "necro",
+    10: "skeleton"
+};
 
 const avatar_desc = {
-    "gobelin": "Mesquin et diabolique, le Gobelin pourra distribuer 2\ngorgées à tout les joueurs !",
-    "orc": "Bourru, l'Orc distribue 10 gorgées à un joueur aléatoire (y \ncompris lui). Point Barre.",
-    "siren": "De part son agilité toute particulière, la Sirène pourra\nannuler son prochain nombre de gorgées.",
-    "mage": "Si le Mage voit ses gorgées doublées au prochain tour, il\npeut l'annuler.",
-    "elf": "L'Elf est vif, ainsi avant même que l'on s'en apperçoivent,\nl'Efle multipliera par deux toutes les prochaines gorgées\ndes autres joueurs.",
-    "nain": "Alcoolique à outrance, le Nain peut s'octroyer 5 gorgées \nainsi qu'à tout ses confrères de petite taille."
+    "gobelin": "GOBELIN - Acrobatie :\nVous distribuez 2 gorgées à tout les autres joueurs.",
+    "orc": "ORC -: Bourrinage :\nVous distribuez 10 gorgées à une personne aléatoire (y\ncompris vous).",
+    "siren": "SIRENE - Protection aquatique :\nVous vous immunisé pour la prochaine salve de gorgées.",
+    "mage": "MAGE - Destruction de bouclier :\nVous supprimez l'immunité de tous les joueurs.",
+    "elf": "ELF - Destabilisation :\nVous appliquez une vulnérabilité à tous les joueurs.",
+    "nain": "NAIN - Beuverie naine :\nVous octroyez à tous les nains ainsi qu'à vous même 5\ngorgées.",
+    "king": "ROI - Impôts sur le revenu :\nVous videz les choppes de capacité de tous les joueurs !",
+    "medusa": "MEDUSE - Pétrification :\nVous distribuez 4 gorgées à tous les humanoïdes.",
+    "barman": "TAVERNIER - Tournée générale :\nVous remplissez les choppes de capacité de tous les\njoueurs !",
+    "necro": "NECROMANCIEN - Levée des morts :\nVous transformez aléatoirement un joueur en squelette.",
+    "skeleton": "SQUELETTE - Craquement d'os :\nVous disitribuez 7 gorgées en vous appliquant une\nvulnérabilité."
 }
 
 const SceneLobby = function() {};
@@ -82,7 +97,6 @@ SceneLobby.prototype.nextAvatar = function() {
     window.dispatchEvent(new Event('soundButton'));
     const user = this.game.global.gameClient.players[this.game.global.gameClient.myPlayerNb];
     this.elems.avatar.frame++;
-    this.elems.desc_img.frame++;
     this.game.global.gameClient.chooseRace(avatar_name[this.elems.avatar.frame]);
     this.elems.desc.text = avatar_desc[avatar_name[this.elems.avatar.frame]];
 };
@@ -91,11 +105,9 @@ SceneLobby.prototype.prevAvatar = function() {
     window.dispatchEvent(new Event('soundButton'));
     const user = this.game.global.gameClient.players[this.game.global.gameClient.myPlayerNb];
     if (this.elems.avatar.frame == 0) {
-        this.elems.avatar.frame = 5;
-        this.elems.desc_img.frame = 5;
+        this.elems.avatar.frame = 10;
     } else {
         this.elems.avatar.frame--;
-        this.elems.desc_img.frame--;
     }
     this.game.global.gameClient.chooseRace(avatar_name[this.elems.avatar.frame]);
     this.elems.desc.text = avatar_desc[avatar_name[this.elems.avatar.frame]];
@@ -128,7 +140,7 @@ SceneLobby.prototype.create = function() {
             "",
             {
                 font: "30px ManicSea",
-                fill: "black",
+                fill: "white",
                 textAlign: "center",
                 boundsAlignH: "center"
             }

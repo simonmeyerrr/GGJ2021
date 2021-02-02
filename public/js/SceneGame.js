@@ -169,7 +169,7 @@ const gameOptions = {
     flipZoom: 1.2
 }
 
-const skinsOrder = ["gobelin", "orc", "siren", "mage", "elf", "nain"]
+const skinsOrder = ["gobelin", "orc", "siren", "mage", "elf", "nain", "king", "medusa", "barman", "necro", "skeleton"];
 
 const drawDeck = {
     x: 1920 / 2,
@@ -469,10 +469,29 @@ SceneGame.prototype.displayGameData = function() {
                         dialog = "Tu sera immunisé contre tes prochaines georgées.";
                         break;
                     case "mage":
-                        dialog = "Tu as retiré les maléfices qui te touchaient.";
+                        dialog = "Tu as retiré les immunités de tes adversaires.";
                         break;
                     case "elf":
                         dialog = "Tu as doublé les prochaines georgées de\ntes adversaires.";
+                        break;
+                    case "king":
+                        dialog = "Tu as collecté les impôts de bière sur tes adversaires !";
+                        break;
+                    case "medusa":
+                        dialog = "Tu as pétrifié tous tes adversaires humanoides.";
+                        break;
+                    case "barman":
+                        dialog = "Tu as remplis toutes les choppes de tes camarades !";
+                        break;
+                    case "necro":
+                        const usernb = lastEvent.data.drink[0].player;
+                        if (players[usernb].race === "skeleton")
+                            dialog = "Tu as essayé de transformer un squelette en\nsquelette...";
+                        else
+                            dialog = players[usernb].username + " a été transformé en squelette !";
+                        break;
+                    case "skeleton":
+                        dialog = "Tu t'es appliqué une vulnérabilité pour distribuer\n7 gorgées à " + players[lastEvent.data.drink[0].player].username;
                         break;
                 }
                 printDialog(dialog, this, () => {
@@ -578,6 +597,38 @@ SceneGame.prototype.displayGameData = function() {
                         break;
                     case "elf":
                         dialog = "Tes prochaines georgées ont été doublées.";
+                        break;
+                    case "king":
+                        dialog = players[lastEvent.data.player].username + " a collecté toute\nta bière...";
+                        break;
+                    case "medusa":
+                        if (["mage", "elf", "nain", "king", "barman", "necro"].includes(players[myPlayerNb].race))
+                            dialog = players[lastEvent.data.player].username + " t'as pétrifié, tu dois boire 4 gorgées...";
+                        else
+                            dialog = "Heureusement pour toi, tu n'es pas vraiment\nhumain... !";
+                        break;
+                    case "barman":
+                        dialog = players[lastEvent.data.player].username + " a rempli ta choppe !\nEn route pour la capacité spéciale !";
+                        break;
+                    case "necro":
+                        if (lastEvent.data.drink[0].player == myPlayerNb) {
+                            if (players[lastEvent.data.drink[0].player].race === "skeleton")
+                                dialog = "Tu es déjà un squelette, ça ne sert à rien...";
+                            else
+                                dialog = "Tu as été trasnformé en squelette !";
+                        } else {
+                            if (players[lastEvent.data.drink[0].player].race === "skeleton")
+                                dialog = players[lastEvent.data.player].username + " est déjà un squelette !";
+                            else
+                                dialog = players[lastEvent.data.player].username + " s'est transformé en squellete !";
+                        }
+                        break;
+                    case "skeleton":
+                        if (lastEvent.data.drink[0].player === myPlayerNb) {
+                            dialog = players[lastEvent.data.player].username + " s'est mutilé pour que tu boives\n10 gorgées.";
+                        } else {
+                            dialog = players[lastEvent.data.player].username + " s'est mutilé pour que " + players[lastEvent.data.drink[0].player].username + " boive\n10 gorgées.";
+                        }
                         break;
                 }
                 printDialog(dialog, this);
